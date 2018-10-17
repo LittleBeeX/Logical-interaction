@@ -70,7 +70,7 @@
 		'know_more'=>'了解更多',
 		'money_rmb'=>'¥1500',
 		'money_min'=>'本次服务最低费用',
-		'money_little'=>'约合 <br />  <span class="fz44">150</span> LT',
+		'money_little'=>'',//约合 <br />  <span class="fz44">150</span> LT
 		'littlepay_nb'=>'＊支持LT TOKEN支付',
 		'basic_data'=>'填写基本信息',
 		'name'=>'私人有限公司拟用名称',
