@@ -5,7 +5,7 @@ class node_se extends actionAbstract {
 
     function __construct() {
         parent::__construct();
-
+        
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
@@ -34,8 +34,10 @@ class node_se extends actionAbstract {
     //获取组织信息
     public function company(){
         $this->loadModel('user','company');
+        $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:'';
+        $only = filterCharacter($only);
         if (empty($only)) {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
@@ -47,9 +49,33 @@ class node_se extends actionAbstract {
         }else{
             exit(json_encode(array('state' => 0,'info' => $info)));
         }
+    }
 
+    //获取个人信息
+    public function chain(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
 
+        $only = isset($_POST['only'])?$_POST['only']:'';
+        $only = filterCharacter($only);
+        if (empty($only)) {
+            exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
+        }
 
+        $sql = "SELECT id FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id'];
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 3,'info' => "当前组织无个人信息")));
+        }else{
+            exit(json_encode(array('state' => 0,'info' => $info)));
+        }
     }
 
 }
