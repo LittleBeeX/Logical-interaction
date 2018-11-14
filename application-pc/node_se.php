@@ -42,7 +42,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
 
-        $sql = "SELECT name,code,address,capital,establish,only,state FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT name,code,address,capital,establish,only,state,support,quorum,duration,token_name,token_symbol,token_number FROM user_company WHERE only='".$only."'";
         $info = $this->user->companyModel->fetchRow($sql);
         if(empty($info)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -59,21 +59,78 @@ class node_se extends actionAbstract {
 
         $only = isset($_POST['only'])?$_POST['only']:'';
         $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        if (empty($address)) {
+            exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+        }
+        $companyid = 0;
+        $sql = "SELECT id FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(!empty($companyinfo)){
+            $companyid = $companyinfo['id'];
+        }
+
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            $info = array(
+                'surname' => '',
+                'name'=> '',
+                'sex'=> 0,
+                'nationality'=> 0,
+                'birthtime'=> 0,
+                'address'=> $address,
+                'picture'=> '',
+                'state' => 0,
+            );
+        }else{
+            $info = $chaininfo;
+        }
+        exit(json_encode(array('state' => 0,'info' => $info)));
+    }
+    
+    //获取组织和个人信息
+    public function company_individual(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','chain');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:'';
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
         if (empty($only)) {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
+        if (empty($address)) {
+            exit(json_encode(array('state' => 3,'info' => "钱包地址不能为空")));
+        }
 
-        $sql = "SELECT id FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT id,name,code,address,capital,establish,only,state,support,quorum,duration,token_name,token_symbol,token_number FROM user_company WHERE only='".$only."'";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
-        }
-
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id'];
-        $chaininfo = $this->user->chainModel->fetchRow($sql);
-        if(empty($chaininfo)){
-            exit(json_encode(array('state' => 3,'info' => "当前组织无个人信息")));
         }else{
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$chaininfo = $this->user->chainModel->fetchRow($sql);
+        	unset($companyinfo['id']);
+        	$info['company'] = $companyinfo;
+	        if(empty($chaininfo)){
+	        	$info['chain'] = array(
+	        		'surname' => '',
+	        		'name'=> '',
+	        		'sex'=> 0,
+	        		'nationality'=> 0,
+	        		'birthtime'=> 0,
+	        		'address'=> $address,
+	        		'picture'=> '',
+	        		'state' => 0,
+	        	);
+	        }else{
+	        	$info['chain'] = $chaininfo;
+	        }
+
             exit(json_encode(array('state' => 0,'info' => $info)));
         }
     }

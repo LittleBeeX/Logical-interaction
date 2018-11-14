@@ -5,7 +5,7 @@ class node_su extends actionAbstract {
 
     function __construct() {
         parent::__construct();
-
+        
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
@@ -98,7 +98,7 @@ class node_su extends actionAbstract {
                     }
                 }
             }else{
-                exit(json_encode(array('state' => 7,'info' => '公司组织标识码以注册，请用其他标识码')));
+                exit(json_encode(array('state' => 7,'info' => '公司组织标识码以注册或你无权修改别组织信息')));
             }
             if($companyinfo['state'] == 1){
                 exit(json_encode(array('state' => 8,'info' => '信息正是审核中，不能进行修改操作')));
@@ -232,6 +232,62 @@ class node_su extends actionAbstract {
         }
         if(empty($re)){
             exit(json_encode(array('state' => 5,'info' => '操作失败')));
+        }
+        exit(json_encode(array('state' => 0,'info' => '操作成功')));
+    }
+
+    //提交令牌信息
+    public function token(){
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $support = isset($_POST['support'])?$_POST['support']:0;
+        $support = substr(sprintf("%.3f",$support),0,-1);
+        $quorum = isset($_POST['quorum'])?$_POST['quorum']:0;
+        $quorum = substr(sprintf("%.3f",$quorum),0,-1);
+        $duration = isset($_POST['duration'])?(int)$_POST['duration']:0;
+        $token_name = isset($_POST['token_name'])?$_POST['token_name']:'';
+        $token_name = filterCharacter($token_name);
+        $token_symbol = isset($_POST['token_symbol'])?$_POST['token_symbol']:'';
+        $token_symbol = filterCharacter($token_symbol);
+        $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+        if($companyinfo['uid'] != $this->uid){
+            exit(json_encode(array('state' => 3,'info' => "你无权修改别组织令牌信息")));
+        }
+        if($companyinfo['state'] == 1){
+            exit(json_encode(array('state' => 4,'info' => '信息正是审核中，不能进行修改操作')));
+        }
+        if($companyinfo['state'] == 2){
+            exit(json_encode(array('state' => 5,'info' => '信息以审核通过，如有修改请联系客服')));
+        }
+        $uparr = array(
+            'support' => $support,
+            'quorum' => $quorum,
+            'duration' => $duration,
+            'token_name' => $token_name,
+            'token_symbol' => $token_symbol,
+            'token_number' => $token_number,
+            'change_time' => time()
+        );
+        if($chaininfo['state'] == 3){
+            $uparr['state'] = 1;
+        }
+        $re=$this->user->companyModel->update($uparr,"id=".$companyinfo['id']);
+        }
+        if(empty($re)){
+            exit(json_encode(array('state' => 6,'info' => '操作失败')));
         }
         exit(json_encode(array('state' => 0,'info' => '操作成功')));
     }
