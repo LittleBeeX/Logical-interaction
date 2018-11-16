@@ -5,7 +5,7 @@ class node_se extends actionAbstract {
 
     function __construct() {
         parent::__construct();
-        $_SESSION['userinfo'] =array("uuid"=>"cedcd0d6-2f27-11e8-b3ae-7cd30ab71c1c","account"=>"18310609431");
+        
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
