@@ -161,7 +161,7 @@ class node_su extends actionAbstract {
         $birthtime = strtotime($birthtime);
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
-        
+
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
         }
@@ -169,7 +169,7 @@ class node_su extends actionAbstract {
         if($sex<0 || $sex>2){
             $sex = 0;
         }
-        if($nationality<0 || $nationality>8){
+        if($nationality<0 || $nationality>28){
             $nationality = 0;
         }
         if(empty($birthtime)){
