@@ -5,7 +5,7 @@ class node_se extends actionAbstract {
 
     function __construct() {
         parent::__construct();
-        
+
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
@@ -83,6 +83,7 @@ class node_se extends actionAbstract {
                 'address'=> $address,
                 'picture'=> '',
                 'state' => 0,
+                'remarks' => '',
             );
         }else{
             $info = $chaininfo;
@@ -124,6 +125,7 @@ class node_se extends actionAbstract {
 	        		'address'=> $address,
 	        		'picture'=> '',
 	        		'state' => 0,
+                    'remarks' => '',
 	        	);
 	        }else{
 	        	$info['chain'] = $chaininfo;

@@ -6,6 +6,7 @@ class node_su extends actionAbstract {
     function __construct() {
         parent::__construct();
 
+        
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
