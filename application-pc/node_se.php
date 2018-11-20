@@ -5,7 +5,7 @@ class node_se extends actionAbstract {
 
     function __construct() {
         parent::__construct();
-
+        
         $this->loadModel('user','basic');
         if(!isset($_SESSION['userinfo'])){
             exit(json_encode(array('state' => 101,'info' => "未登录")));
@@ -71,7 +71,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -84,6 +84,8 @@ class node_se extends actionAbstract {
                 'picture'=> '',
                 'state' => 0,
                 'remarks' => '',
+                'token_number' => 0,
+                'token_proportion' => 0,
             );
         }else{
             $info = $chaininfo;
@@ -113,7 +115,7 @@ class node_se extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
 	        	$info['chain'] = array(
@@ -126,6 +128,8 @@ class node_se extends actionAbstract {
 	        		'picture'=> '',
 	        		'state' => 0,
                     'remarks' => '',
+                    'token_number' => 0,
+                    'token_proportion' => 0,
 	        	);
 	        }else{
 	        	$info['chain'] = $chaininfo;
@@ -143,6 +147,97 @@ class node_se extends actionAbstract {
 
             exit(json_encode(array('state' => 0,'info' => $info)));
         }
+    }
+
+    //获取当前钱包地址所在公司组织列表
+    public function company_list(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','chain');
+        $this->loadHelper("common");
+
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        if (empty($address)) {
+            exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+        }
+        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid;
+        $list = $this->user->companyModel->fetchAll($sql);
+        if(empty($list)){
+            exit(json_encode(array('state' => 2,'info' => "无公司组织信息")));
+        }
+        exit(json_encode(array('state' => 0,'info' => $list)));
+    }
+
+    //获取组织成员信息列表
+    public function chain_list(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','chain');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:'';
+        $only = filterCharacter($only);
+        if (empty($only)) {
+            exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT surname,name,address,token_number,token_proportion FROM user_chain WHERE company=".$companyinfo['id']." and state=2";
+        $list = $this->user->chainModel->fetchAll($sql);
+        if(empty($list)){
+            exit(json_encode(array('state' => 3,'info' => "无成员信息")));
+        }
+        exit(json_encode(array('state' => 0,'info' => $list)));
+    }
+
+    //获取组织会议信息列表
+    public function meeting_list(){
+        exit;
+        $this->loadModel('user','company');
+        $this->loadModel('user','meeting');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:'';
+        $only = filterCharacter($only);
+        $state = isset($state['only'])?(int)$_POST['state']:0;
+        if($state<0 || $state>2){
+            $state = 0;
+        }
+        if (empty($only)) {
+            exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
+        }
+
+        $sql = "SELECT id,duration FROM user_company WHERE only='".$only."'";
+        $companyinfo[''] = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,start_time FROM user_meeting WHERE company=".$companyinfo['id']." and state=0";
+        $list_state = $this->user->meetingModel->fetchAll($sql);
+        $duration = $companyinfo['duration']*3600;
+        if(!empty($list_state)){
+            foreach ($list_state as $key => $value) {
+                $time = time();
+                $end = $value['start_time'] + $duration;
+                if($time >= $end){
+                    $this->user->meetingModel->update(array('state'=>2),"id=".$value['id']);
+                }
+            }
+        }
+
+        $sql = "SELECT a.content,a.start_time,a.end_time,a.state,(SELECT SUM(token_number) as yes_number,SUM(token_proportion) as yes_proportion FROM user_vote WHERE meeting=a.id and state=1),(SELECT SUM(token_number) as no_number,SUM(token_proportion) as no_proportion FROM user_vote WHERE meeting=a.id and state=2) FROM user_meeting as a WHERE a.company=".$companyinfo['id'];
+        
+
+        $list = $this->user->meetingModel->fetchAll($sql);
+        if(empty($list)){
+            exit(json_encode(array('state' => 3,'info' => "无成员信息")));
+        }
+        exit(json_encode(array('state' => 0,'info' => $list)));
     }
 
 }
