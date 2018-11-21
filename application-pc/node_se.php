@@ -56,6 +56,7 @@ class node_se extends actionAbstract {
         $this->loadModel('user','chain');
         $this->loadModel('user','company');
         $this->loadHelper("common");
+        global $phone_codes;
 
         $only = isset($_POST['only'])?$_POST['only']:'';
         $only = filterCharacter($only);
@@ -71,7 +72,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -83,11 +84,22 @@ class node_se extends actionAbstract {
                 'address'=> $address,
                 'picture'=> '',
                 'state' => 0,
+                'create_time' => 0,
                 'remarks' => '',
                 'token_number' => 0,
                 'token_proportion' => 0,
+                'remarks' => '',
+                'country_cn' => '未选择',
+                'country_en' => 'Unselected',
             );
         }else{
+            if($chaininfo['nationality'] == 0){
+                $chaininfo['country_cn'] = '未选择';
+                $chaininfo['country_en'] = 'Unselected';
+            }else{
+                $chaininfo['country_cn'] = $phone_codes[$chaininfo['nationality']]['country'];
+                $chaininfo['country_en'] = $phone_codes[$chaininfo['nationality']]['en'];
+            }
             $info = $chaininfo;
         }
         exit(json_encode(array('state' => 0,'info' => $info)));
@@ -98,6 +110,7 @@ class node_se extends actionAbstract {
         $this->loadModel('user','company');
         $this->loadModel('user','chain');
         $this->loadHelper("common");
+        global $phone_codes;
 
         $only = isset($_POST['only'])?$_POST['only']:'';
         $only = filterCharacter($only);
@@ -115,24 +128,19 @@ class node_se extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,remarks,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
-	        	$info['chain'] = array(
-	        		'surname' => '',
-	        		'name'=> '',
-	        		'sex'=> 0,
-	        		'nationality'=> 0,
-	        		'birthtime'=> 0,
-	        		'address'=> $address,
-	        		'picture'=> '',
-	        		'state' => 0,
-                    'remarks' => '',
-                    'token_number' => 0,
-                    'token_proportion' => 0,
-	        	);
+                exit(json_encode(array('state' => 4,'info' => "你不是当前组织成员，无权访问")));
 	        }else{
-	        	$info['chain'] = $chaininfo;
+                if($chaininfo['nationality'] == 0){
+                    $chaininfo['country_cn'] = '未选择';
+                    $chaininfo['country_en'] = 'Unselected';
+                }else{
+                    $chaininfo['country_cn'] = $phone_codes[$chaininfo['nationality']]['country'];
+                    $chaininfo['country_en'] = $phone_codes[$chaininfo['nationality']]['en'];
+                }
+                $info['chain'] = $chaininfo;
 	        }
 
 	        if($companyinfo['uid'] == $this->uid){
@@ -196,14 +204,13 @@ class node_se extends actionAbstract {
 
     //获取组织会议信息列表
     public function meeting_list(){
-        exit;
         $this->loadModel('user','company');
         $this->loadModel('user','meeting');
         $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:'';
         $only = filterCharacter($only);
-        $state = isset($state['only'])?(int)$_POST['state']:0;
+        $state = isset($_POST['state'])?(int)$_POST['state']:0;
         if($state<0 || $state>2){
             $state = 0;
         }
@@ -230,12 +237,15 @@ class node_se extends actionAbstract {
             }
         }
 
-        $sql = "SELECT a.content,a.start_time,a.end_time,a.state,(SELECT SUM(token_number) as yes_number,SUM(token_proportion) as yes_proportion FROM user_vote WHERE meeting=a.id and state=1),(SELECT SUM(token_number) as no_number,SUM(token_proportion) as no_proportion FROM user_vote WHERE meeting=a.id and state=2) FROM user_meeting as a WHERE a.company=".$companyinfo['id'];
-        
-
+        $sql = "SELECT meeting.id,meeting.content,meeting.start_time,meeting.end_time,meeting.state,
+				SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END) yes_number,
+				SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END) no_number,
+				SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END) yes_proportion,
+				SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END) no_proportion 
+				FROM user_meeting meeting LEFT JOIN user_vote vote ON meeting.id=vote.meeting WHERE meeting.company=".$companyinfo['id'];
         $list = $this->user->meetingModel->fetchAll($sql);
         if(empty($list)){
-            exit(json_encode(array('state' => 3,'info' => "无成员信息")));
+            exit(json_encode(array('state' => 3,'info' => "无会议信息")));
         }
         exit(json_encode(array('state' => 0,'info' => $list)));
     }

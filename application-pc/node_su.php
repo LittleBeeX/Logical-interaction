@@ -160,6 +160,8 @@ class node_su extends actionAbstract {
         $birthtime = strtotime($birthtime);
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
+        $passports = isset($_POST['passports'])?$_POST['passports']:'';
+        $passports = filterCharacter($passports);
 
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
@@ -210,7 +212,8 @@ class node_su extends actionAbstract {
                 'birthtime' => $birthtime,
                 'address' => $address,
                 'picture' => $picture,
-                'create_time' => time()
+                'create_time' => time(),
+                'passports' => $passports,
             );
             $re=$this->user->chainModel->insert($inarr);
         }else{
