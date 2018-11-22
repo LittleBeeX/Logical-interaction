@@ -188,7 +188,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
 
-        $sql = "SELECT id FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -218,7 +218,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
 
-        $sql = "SELECT id,duration FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT id,duration FROM user_company WHERE only='".$only."' and state=2";
         $companyinfo[''] = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -237,12 +237,12 @@ class node_se extends actionAbstract {
             }
         }
 
-        $sql = "SELECT meeting.id,meeting.content,meeting.start_time,meeting.end_time,meeting.state,
+        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.start_time,meeting.end_time,
 				SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END) yes_number,
 				SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END) no_number,
 				SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END) yes_proportion,
 				SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END) no_proportion 
-				FROM user_meeting meeting LEFT JOIN user_vote vote ON meeting.id=vote.meeting WHERE meeting.company=".$companyinfo['id'];
+				FROM user_meeting meeting LEFT JOIN user_vote vote ON meeting.id=vote.meeting WHERE meeting.company=".$companyinfo['id']." and meeting.state=".$state;
         $list = $this->user->meetingModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 3,'info' => "无会议信息")));

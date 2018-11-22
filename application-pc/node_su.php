@@ -249,6 +249,9 @@ class node_su extends actionAbstract {
             if(!empty($picture) && $picture != $chaininfo['picture']){
                 $uparr['picture'] = $picture;
             }
+            if(!empty($passports) && $passports != $chaininfo['passports']){
+                $uparr['passports'] = $passports;
+            }
             if($chaininfo['state'] == 3){
                 $uparr['state'] = 1;
             }
@@ -389,6 +392,123 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 7,'info' => '操作失败')));
         }
         exit(json_encode(array('state' => 0,'info' => '操作成功')));
+    }
+
+    //发起一个会议
+    public function meeting(){
+        $this->loadModel('user','meeting');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:"";
+        $address = filterCharacter($address);
+        $type = isset($_POST['type'])?(int)$_POST['type']:0;
+        if($type<0 || $type>1){
+        	$type = 0;
+        }
+        $content = isset($_POST['content'])?$_POST['content']:"";
+        $content = filterCharacter($content);
+        $target = isset($_POST['target'])?$_POST['target']:"";
+        $target = filterCharacter($target);
+        $number = isset($_POST['number'])?(int)$_POST['number']:0;
+
+        if(empty($address)){
+            exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+        }
+        if(empty($only)){
+            exit(json_encode(array('state' => 2,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+        $sql = "SELECT id FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
+        }
+
+        $inarr = array(
+        	'uid' => $this->uid,
+        	'type' => $type,
+        	'company' => $companyinfo['id'],
+        	'start_time' => time(),
+        );
+        if($type == 1){
+        	if(empty($target)){
+	            exit(json_encode(array('state' => 5,'info' => "目标地址不能为空")));
+	        }
+        	if(empty($number)){
+	            exit(json_encode(array('state' => 6,'info' => "请输入正确的增发数量")));
+	        }
+	        $sql = "SELECT id FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2";
+	        $targetinfo = $this->user->chainModel->fetchRow($sql);
+	        if(empty($targetinfo)){
+	            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
+	        }
+	        $inarr['content'] = $target.'@'.$number;
+        }else{
+        	if(empty($content)){
+	            exit(json_encode(array('state' => 8,'info' => "会议内容不能为空")));
+	        }
+	        $inarr['content'] = $content;
+        }
+        $re=$this->user->meetingModel->insert($inarr);
+        if(empty($re)){
+            exit(json_encode(array('state' => 9,'info' => '操作失败')));
+        }
+        exit(json_encode(array('state' => 0,'info' => '操作成功')));
+    }
+
+    //提交一个投票操作
+    public function vote(){
+        $this->loadModel('user','vote');
+        $this->loadModel('user','meeting');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:""; 
+        $address = filterCharacter($address);
+        $id = isset($_POST['id'])?(int)$_POST['id']:0;
+
+        if(empty($address)){
+            exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+        }
+        if(empty($only)){
+            exit(json_encode(array('state' => 2,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($id)){
+            exit(json_encode(array('state' => 3,'info' => "会议ID不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 4,'info' => "无当前组织信息")));
+        }
+        $sql = "SELECT id FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 5,'info' => "该组织信息无当前用户信息")));
+        }
+        $sql = "SELECT id,type FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
+        $meetinginfo = $this->user->meetingModel->fetchRow($sql);
+        if(empty($meetinginfo)){
+            exit(json_encode(array('state' => 6,'info' => "组织内无当前会议或已结束")));
+        }
+        $sql = "SELECT id FROM user_vote WHERE uid =".$this->uid." and meeting=".$id;
+        $voteinfo = $this->user->voteModel->fetchRow($sql);
+        if(!empty($voteinfo)){
+            exit(json_encode(array('state' => ,'info' => "已投过票了，不能重复投")));
+        }
     }
 
 
