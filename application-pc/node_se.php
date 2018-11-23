@@ -168,7 +168,7 @@ class node_se extends actionAbstract {
         if (empty($address)) {
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
         }
-        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid;
+        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address=".$address;
         $list = $this->user->companyModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 2,'info' => "无公司组织信息")));
@@ -205,11 +205,16 @@ class node_se extends actionAbstract {
     //获取组织会议信息列表
     public function meeting_list(){
         $this->loadModel('user','company');
+        $this->loadModel('user','chain');
         $this->loadModel('user','meeting');
+        $this->loadModel('user','vote');
         $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:'';
         $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        $condition = isset($_POST['condition'])?(int)$_POST['condition']:0;
         $state = isset($_POST['state'])?(int)$_POST['state']:0;
         if($state<0 || $state>2){
             $state = 0;
@@ -217,11 +222,20 @@ class node_se extends actionAbstract {
         if (empty($only)) {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
+        if (empty($address)) {
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
 
-        $sql = "SELECT id,duration FROM user_company WHERE only='".$only."' and state=2";
-        $companyinfo[''] = $this->user->companyModel->fetchRow($sql);
+        $sql = "SELECT id,support,quorum,duration FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
-            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
         }
 
         $sql = "SELECT id,start_time FROM user_meeting WHERE company=".$companyinfo['id']." and state=0";
@@ -237,15 +251,37 @@ class node_se extends actionAbstract {
             }
         }
 
-        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.start_time,meeting.end_time,
-				SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END) yes_number,
-				SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END) no_number,
-				SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END) yes_proportion,
-				SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END) no_proportion 
-				FROM user_meeting meeting LEFT JOIN user_vote vote ON meeting.id=vote.meeting WHERE meeting.company=".$companyinfo['id']." and meeting.state=".$state;
+        if(empty($condition)){
+            $where = "meeting.company=".$companyinfo['id']." GROUP BY meeting.id";
+        }else{
+            $where = "meeting.company=".$companyinfo['id']." and meeting.state=".$state." GROUP BY meeting.id";
+        }
+        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,chain.surname,chain.name,chain.address,
+				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END),0) yes_number,
+				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END),0) no_number,
+				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END),0) yes_proportion,
+				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END),0) no_proportion,
+                SUM(CASE WHEN vote.state=1 THEN 1 ELSE 0 END) as yes_cnt,
+                SUM(CASE WHEN vote.state=2 THEN 1 ELSE 0 END) as no_cnt 
+				FROM user_meeting meeting LEFT JOIN user_chain chain ON meeting.uid=chain.uid and meeting.company=chain.company LEFT JOIN user_vote vote ON meeting.id=vote.meeting 
+                WHERE ".$where;
         $list = $this->user->meetingModel->fetchAll($sql);
-        if(empty($list)){
-            exit(json_encode(array('state' => 3,'info' => "无会议信息")));
+        if(!empty($list)){
+            foreach ($list as $key_t => $value_t) {
+                if($value_t['state'] == 0){
+                    $sql = "SELECT id FROM user_vote WHERE uid=".$this->uid." and meeting=".$value_t['id'];
+                    $voteinfo = $this->user->voteModel->fetchRow($sql);
+                    if(empty($voteinfo)){
+                        $list[$key_t]['throw'] = 0;
+                    }else{
+                        $list[$key_t]['throw'] = 1; 
+                    }
+                }else{
+                    $list[$key_t]['throw'] = 1;
+                }
+                $list[$key_t]['support'] = $companyinfo['support'];
+                $list[$key_t]['quorum'] = $companyinfo['quorum'];
+            }
         }
         exit(json_encode(array('state' => 0,'info' => $list)));
     }

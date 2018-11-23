@@ -77,13 +77,19 @@ class node_su extends actionAbstract {
                 'only' => $only,
                 'create_time' => time()
             );
-            $re=$this->user->companyModel->insert($inarr);
-            if(empty($re)){
-                exit(json_encode(array('state' => 10,'info' => '操作失败')));
-            }else{
+
+            try{
+                $this->user->chainModel->beginTransaction();
+
+                $re=$this->user->companyModel->insert($inarr);
                 $this->user->chainModel->update(array('company'=>$re),"id=".$chaininfo['id']);
-                exit(json_encode(array('state' => 0,'info' => '操作成功')));
+
+                $this->user->chainModel->commit();
+            }catch(Exception $e){
+                $this->user->chainModel->rollBack();
+                exit(json_encode(array('state' => 10,'info' => '操作失败')));
             }
+            exit(json_encode(array('state' => 0,'info' => '操作成功')));
         }else{
             if($companyinfo['uid'] == $this->uid){
                 $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=".$companyinfo['id'];
@@ -266,6 +272,7 @@ class node_su extends actionAbstract {
     //提交令牌信息
     public function token(){
         $this->loadModel('user','company');
+        $this->loadModel('user','chain');
         $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:"";
@@ -318,11 +325,11 @@ class node_su extends actionAbstract {
         }
         if(!empty($token_number) && $token_number != $companyinfo['token_number']){
             $uparr['token_number'] = $token_number;
+            $this->user->chainModel->update(array('token_number'=>$token_number,'token_proportion'=>100),"uid=".$companyinfo['uid']." and company=".$companyinfo['id']);
         }
         if($companyinfo['state'] == 3){
             $uparr['state'] = 1;
         }
-
         $re=$this->user->companyModel->update($uparr,"id=".$companyinfo['id']);
         if(empty($re)){
             exit(json_encode(array('state' => 6,'info' => '操作失败')));
@@ -394,6 +401,70 @@ class node_su extends actionAbstract {
         exit(json_encode(array('state' => 0,'info' => '操作成功')));
     }
 
+    //转让操作
+    public function zhuanrang(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:"";
+        $address = filterCharacter($address);
+        $target = isset($_POST['target'])?$_POST['target']:"";
+        $target = filterCharacter($target);
+        $number = isset($_POST['number'])?(int)$_POST['number']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+        if(empty($target)){
+            exit(json_encode(array('state' => 3,'info' => "目标地址不能为空")));
+        }
+        if(empty($number)){
+            exit(json_encode(array('state' => 4,'info' => "请输入正确的转发数量")));
+        }
+
+        $sql = "SELECT id,token_number FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 5,'info' => "无当前组织信息")));
+        }
+        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
+        }
+        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$target."' and company=".$companyinfo['id']." and state=2";
+        $targetinfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($targetinfo)){
+            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
+        }
+        if($chaininfo['token_number'] < $number){
+            exit(json_encode(array('state' => 8,'info' => "成员的Token数量不足")));
+        }
+        $number_a = $chaininfo['token_number'] - $number;
+        $proportion_a = $number_a/$companyinfo['token_number']*100;
+        $number_b = $targetinfo['token_number'] + $number;
+        $proportion_b = $number_b/$companyinfo['token_number']*100;
+
+        try{
+            $this->user->chainModel->beginTransaction();
+
+            $this->user->chainModel->update(array('token_number'=>$number_a,'token_proportion'=>$proportion_a),"id=".$chaininfo['id']);
+            $this->user->chainModel->update(array('token_number'=>$number_b,'token_proportion'=>$proportion_b),"id=".$targetinfo['id']);
+
+            $this->user->chainModel->commit();
+        }catch(Exception $e){
+            $this->user->chainModel->rollBack();
+            exit(json_encode(array('state' => 9,'info' => '操作失败')));
+        }
+        exit(json_encode(array('state' => 0,'info' => "操作完成")));
+    }
+
     //发起一个会议
     public function meeting(){
         $this->loadModel('user','meeting');
@@ -451,7 +522,8 @@ class node_su extends actionAbstract {
 	        if(empty($targetinfo)){
 	            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
 	        }
-	        $inarr['content'] = $target.'@'.$number;
+	        $inarr['target'] = $target;
+            $inarr['number'] = $number;
         }else{
         	if(empty($content)){
 	            exit(json_encode(array('state' => 8,'info' => "会议内容不能为空")));
@@ -478,6 +550,10 @@ class node_su extends actionAbstract {
         $address = isset($_POST['address'])?$_POST['address']:""; 
         $address = filterCharacter($address);
         $id = isset($_POST['id'])?(int)$_POST['id']:0;
+        $state = isset($_POST['state'])?(int)$_POST['state']:0;
+        if($state<0 || $state>2){
+            $state = 0;
+        }
 
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
@@ -488,30 +564,88 @@ class node_su extends actionAbstract {
         if(empty($id)){
             exit(json_encode(array('state' => 3,'info' => "会议ID不能为空")));
         }
+        if(empty($state)){
+            exit(json_encode(array('state' => 4,'info' => "请选择是与否")));
+        }
 
-        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $sql = "SELECT id,token_number,support,quorum FROM user_company WHERE only='".$only."' and state=2";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
-            exit(json_encode(array('state' => 4,'info' => "无当前组织信息")));
+            exit(json_encode(array('state' => 5,'info' => "无当前组织信息")));
         }
-        $sql = "SELECT id FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
-            exit(json_encode(array('state' => 5,'info' => "该组织信息无当前用户信息")));
+            exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
         }
-        $sql = "SELECT id,type FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
+        $sql = "SELECT id,type,target,number FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
         $meetinginfo = $this->user->meetingModel->fetchRow($sql);
         if(empty($meetinginfo)){
-            exit(json_encode(array('state' => 6,'info' => "组织内无当前会议或已结束")));
+            exit(json_encode(array('state' => 7,'info' => "组织内无当前会议或已结束")));
         }
         $sql = "SELECT id FROM user_vote WHERE uid =".$this->uid." and meeting=".$id;
         $voteinfo = $this->user->voteModel->fetchRow($sql);
         if(!empty($voteinfo)){
-            exit(json_encode(array('state' => ,'info' => "已投过票了，不能重复投")));
+            exit(json_encode(array('state' =>8,'info' => "已投过票了，不能重复投")));
         }
+
+        $inarr = array(
+            'uid' => $this->uid,
+            'meeting' => $id,
+            'state' => $state,
+            'token_number' => $chaininfo['token_number'],
+            'token_proportion' => $chaininfo['token_proportion'],
+            'create_time' => time(),
+        );
+        $re=$this->user->voteModel->insert($inarr);
+        if(empty($re)){
+            exit(json_encode(array('state' =>9,'info' => "操作失败")));
+        }
+
+        $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2",'id');
+        $sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
+        $cntvote = $this->user->voteModel->fetchRow($sql);
+        $yes_cnt = $cntvote['yes_cnt']/$cnt*100;
+        $no_cnt = $cntvote['no_cnt']/$cnt*100;
+
+        $sql = "SELECT coalesce(SUM(CASE WHEN state=1 THEN token_number ELSE 0 END),0) as yes_number,coalesce(SUM(CASE WHEN state=2 THEN token_number ELSE 0 END),0) as no_number FROM user_vote WHERE meeting=".$id;
+        $sumvote = $this->user->voteModel->fetchRow($sql);
+        $yes_sum = $sumvote['yes_number']/$companyinfo['token_number']*100;
+        $no_sum = $sumvote['no_number']/$companyinfo['token_number']*100;
+
+        if($no_sum >= $companyinfo['support'] && $no_cnt>=$companyinfo['quorum']){
+            $this->user->meetingModel->update(array('end_time'=>time(),'state'=>2),"id=".$id);
+        }else if($yes_sum > $companyinfo['support'] &&  $yes_cnt>$companyinfo['quorum']){
+            $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
+            if($meetinginfo['type'] == 1){
+                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
+                $targetinfo = $this->user->voteModel->fetchRow($sql);
+                if(empty($targetinfo)){
+                    exit(json_encode(array('state' =>10,'info' => "组织内无当前目标成员信息")));
+                }
+
+                $target = $targetinfo['token_number'] + $meetinginfo['number'];
+                $this->user->chainModel->update(array('token_number'=>$target,'change_time'=>time()),"id=".$targetinfo['id']);
+
+                $sum = $companyinfo['token_number']+$meetinginfo['number'];
+                $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$id);
+
+                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2";
+                $chain_list = $this->user->chainModel->fetchAll($sql);
+                if(!empty($chain_list)){
+                    foreach ($chain_list as $key => $value) {
+                        $proportion = $value['token_number']/$sum*100;
+                        $uparr = array(
+                            'token_proportion' => $proportion,
+                            'change_time' => time()
+                        );
+                        $this->user->chainModel->update($uparr,"id=".$value['id']);
+                    }
+                }
+            }
+        }
+        exit(json_encode(array('state' =>0,'info' => "操作成功")));
     }
-
-
 
     /*订单编号*/
     function order_sn(){
