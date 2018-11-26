@@ -42,7 +42,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
 
-        $sql = "SELECT name,code,address,capital,establish,only,state,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
         $info = $this->user->companyModel->fetchRow($sql);
         if(empty($info)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -72,7 +72,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -83,6 +83,7 @@ class node_se extends actionAbstract {
                 'birthtime'=> 0,
                 'address'=> $address,
                 'picture'=> '',
+                'portrait' =>'',
                 'state' => 0,
                 'create_time' => 0,
                 'remarks' => '',
@@ -123,12 +124,12 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "钱包地址不能为空")));
         }
 
-        $sql = "SELECT id,uid,name,code,address,capital,establish,only,state,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT id,uid,name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
                 exit(json_encode(array('state' => 4,'info' => "你不是当前组织成员，无权访问")));
@@ -144,9 +145,9 @@ class node_se extends actionAbstract {
 	        }
 
 	        if($companyinfo['uid'] == $this->uid){
-	        	$creator = 'yes';
+	        	$creator = 'true';
 	        }else{
-	        	$creator = 'no';
+	        	$creator = 'false';
 	        }
         	unset($companyinfo['id']);
         	unset($companyinfo['uid']);
@@ -168,7 +169,7 @@ class node_se extends actionAbstract {
         if (empty($address)) {
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
         }
-        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address=".$address;
+        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address='".$address."'";
         $list = $this->user->companyModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 2,'info' => "无公司组织信息")));
@@ -215,6 +216,8 @@ class node_se extends actionAbstract {
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
         $condition = isset($_POST['condition'])?(int)$_POST['condition']:0;
+        $search = isset($_POST['search'])?$_POST['search']:'';
+        $search = filterCharacter($search);
         $state = isset($_POST['state'])?(int)$_POST['state']:0;
         if($state<0 || $state>2){
             $state = 0;
@@ -250,12 +253,14 @@ class node_se extends actionAbstract {
                 }
             }
         }
-
-        if(empty($condition)){
-            $where = "meeting.company=".$companyinfo['id']." GROUP BY meeting.id";
-        }else{
-            $where = "meeting.company=".$companyinfo['id']." and meeting.state=".$state." GROUP BY meeting.id";
+        $where = "meeting.company=".$companyinfo['id']." and meeting.state=".$state;
+        /*if(!empty($condition)){
+            $where = " and meeting.state=".$state;
+        }*/
+        if(!empty($search)){
+            $where = " and meeting.content LIKE '%".$state."%'";
         }
+        $where .= " GROUP BY meeting.id";
         $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,chain.surname,chain.name,chain.address,
 				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END),0) yes_number,
 				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END),0) no_number,

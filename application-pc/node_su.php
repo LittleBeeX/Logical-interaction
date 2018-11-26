@@ -145,6 +145,132 @@ class node_su extends actionAbstract {
         }
     }
 
+    //提交公司LOGO
+    public function company_logo(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+        $this->loadHelper('image');
+        $this->loadHelper('uploader');
+        $uploader = new uploader("company");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id,uid,logo FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+        if($companyinfo['uid'] != $this->uid){
+            exit(json_encode(array('state' => 5,'info' => "只有该组织创建者才有权修改")));
+        }
+
+        $logo = "";
+        if(!empty($_FILES['logo']['name'])){
+            $upload = $uploader->start('logo','image',$companyinfo['id'].'_logo_'.time());
+            $logo = $upload['path'];
+            $img_c = substr($logo,1);
+            $img_c = ROOT_PATH.$img_c;//要处理的图片
+            $image = new image($img_c);
+            $image->resizeToWidth(900);//图片宽度
+            $image->save($img_c);//保存图片
+            $image->destory();
+            if(!isset($upload['status'])){
+                exit(json_encode(array('state' => 6,'info' => '图片上传失败')));
+            }
+        }else{
+            exit(json_encode(array('state' => 7,'info' => '未选择图片')));
+        }
+        if(!empty($logo) && $logo != $companyinfo['logo']){
+            $re=$this->user->companyModel->update(array('logo'=>$logo,'change_time'=>time()),"id=".$companyinfo['id']);
+            if(empty($re)){
+                exit(json_encode(array('state' => 8,'info' => '操作失败')));
+            }
+            exit(json_encode(array('state' => 0,'info' => '操作成功','logo' => $logo)));
+        }else{
+            exit(json_encode(array('state' => 0,'info' => '操作成功','logo' => $companyinfo['logo'])));
+        }
+    }
+
+    //提交公司章程
+    public function company_zhangcheng(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+        $this->loadHelper('image');
+        $this->loadHelper('uploader');
+        $uploader = new uploader("company");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id,uid,zhangcheng FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+        if($companyinfo['uid'] != $this->uid){
+            exit(json_encode(array('state' => 5,'info' => "只有该组织创建者才有权修改")));
+        }
+
+        $zhangcheng = "";
+        if(!empty($_FILES['zhangcheng']['name'])){
+            $upload = $uploader->start('zhangcheng','file',$companyinfo['id'].'_zhangcheng_'.time());
+            $zhangcheng = $upload['path'];
+            $img_c = substr($zhangcheng,1);
+            $img_c = ROOT_PATH.$img_c;//要处理的图片
+            $image = new image($img_c);
+            $image->resizeToWidth(900);//图片宽度
+            $image->save($img_c);//保存图片
+            $image->destory();
+            if(!isset($upload['status'])){
+                exit(json_encode(array('state' => 6,'info' => '文件上传失败')));
+            }
+        }else{
+            exit(json_encode(array('state' => 7,'info' => '未选择文件')));
+        }
+        if(!empty($zhangcheng) && $zhangcheng != $companyinfo['zhangcheng']){
+            $re=$this->user->companyModel->update(array('zhangcheng'=>$zhangcheng,'change_time'=>time()),"id=".$companyinfo['id']);
+            if(empty($re)){
+                exit(json_encode(array('state' => 8,'info' => '操作失败')));
+            }
+            exit(json_encode(array('state' => 0,'info' => '操作成功','zhangcheng' => $zhangcheng)));
+        }else{
+            exit(json_encode(array('state' => 0,'info' => '操作成功','zhangcheng' => $companyinfo['zhangcheng'])));
+        }
+    }
+
     //个人认证表单提交
     public function geren_tijiao(){
         $this->loadModel('user','chain');
@@ -185,7 +311,7 @@ class node_su extends actionAbstract {
 
         $picture = "";
         if(!empty($_FILES['picture']['name'])){
-            $upload = $uploader->start('picture','image',$this->uid.'_chain_'.time());
+            $upload = $uploader->start('picture','image',$this->uid.'_picture_'.time());
             $picture = $upload['path'];
             $img_c = substr($picture,1);
             $img_c = ROOT_PATH.$img_c;//要处理的图片
@@ -267,6 +393,65 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 5,'info' => '操作失败')));
         }
         exit(json_encode(array('state' => 0,'info' => '操作成功','picture' => $picture)));
+    }
+
+    //提交个人头像
+    public function chain_portrait(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+        $this->loadHelper('image');
+        $this->loadHelper('uploader');
+        $uploader = new uploader("chain");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,portrait FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+        $portrait = "";
+        if(!empty($_FILES['portrait']['name'])){
+            $upload = $uploader->start('portrait','image',$this->uid.'_portrait_'.time());
+            $portrait = $upload['path'];
+            $img_c = substr($portrait,1);
+            $img_c = ROOT_PATH.$img_c;//要处理的图片
+            $image = new image($img_c);
+            $image->resizeToWidth(900);//图片宽度
+            $image->save($img_c);//保存图片
+            $image->destory();
+            if(!isset($upload['status'])){
+                exit(json_encode(array('state' => 5,'info' => '图片上传失败')));
+            }
+        }else{
+            exit(json_encode(array('state' => 6,'info' => '未选择图片')));
+        }
+        if(!empty($portrait) && $portrait != $chaininfo['portrait']){
+            $re=$this->user->chainModel->update(array('portrait'=>$portrait,'change_time'=>time()),"id=".$chaininfo['id']);
+            if(empty($re)){
+                exit(json_encode(array('state' => 7,'info' => '操作失败')));
+            }
+            exit(json_encode(array('state' => 0,'info' => '操作成功','portrait' => $portrait)));
+        }else{
+            exit(json_encode(array('state' => 0,'info' => '操作成功','portrait' => $chaininfo['portrait'])));
+        }
     }
 
     //提交令牌信息
@@ -401,70 +586,6 @@ class node_su extends actionAbstract {
         exit(json_encode(array('state' => 0,'info' => '操作成功')));
     }
 
-    //转让操作
-    public function zhuanrang(){
-        $this->loadModel('user','chain');
-        $this->loadModel('user','company');
-        $this->loadHelper("common");
-
-        $only = isset($_POST['only'])?$_POST['only']:"";
-        $only = filterCharacter($only);
-        $address = isset($_POST['address'])?$_POST['address']:"";
-        $address = filterCharacter($address);
-        $target = isset($_POST['target'])?$_POST['target']:"";
-        $target = filterCharacter($target);
-        $number = isset($_POST['number'])?(int)$_POST['number']:0;
-
-        if(empty($only)){
-            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
-        }
-        if(empty($address)){
-            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
-        }
-        if(empty($target)){
-            exit(json_encode(array('state' => 3,'info' => "目标地址不能为空")));
-        }
-        if(empty($number)){
-            exit(json_encode(array('state' => 4,'info' => "请输入正确的转发数量")));
-        }
-
-        $sql = "SELECT id,token_number FROM user_company WHERE only='".$only."' and state=2";
-        $companyinfo = $this->user->companyModel->fetchRow($sql);
-        if(empty($companyinfo)){
-            exit(json_encode(array('state' => 5,'info' => "无当前组织信息")));
-        }
-        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
-        $chaininfo = $this->user->chainModel->fetchRow($sql);
-        if(empty($chaininfo)){
-            exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
-        }
-        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$target."' and company=".$companyinfo['id']." and state=2";
-        $targetinfo = $this->user->chainModel->fetchRow($sql);
-        if(empty($targetinfo)){
-            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
-        }
-        if($chaininfo['token_number'] < $number){
-            exit(json_encode(array('state' => 8,'info' => "成员的Token数量不足")));
-        }
-        $number_a = $chaininfo['token_number'] - $number;
-        $proportion_a = $number_a/$companyinfo['token_number']*100;
-        $number_b = $targetinfo['token_number'] + $number;
-        $proportion_b = $number_b/$companyinfo['token_number']*100;
-
-        try{
-            $this->user->chainModel->beginTransaction();
-
-            $this->user->chainModel->update(array('token_number'=>$number_a,'token_proportion'=>$proportion_a),"id=".$chaininfo['id']);
-            $this->user->chainModel->update(array('token_number'=>$number_b,'token_proportion'=>$proportion_b),"id=".$targetinfo['id']);
-
-            $this->user->chainModel->commit();
-        }catch(Exception $e){
-            $this->user->chainModel->rollBack();
-            exit(json_encode(array('state' => 9,'info' => '操作失败')));
-        }
-        exit(json_encode(array('state' => 0,'info' => "操作完成")));
-    }
-
     //发起一个会议
     public function meeting(){
         $this->loadModel('user','meeting');
@@ -498,41 +619,46 @@ class node_su extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
-        $sql = "SELECT id FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id,token_number FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
         }
 
+        if(empty($content)){
+            exit(json_encode(array('state' => 8,'info' => "会议内容不能为空")));
+        }
         $inarr = array(
         	'uid' => $this->uid,
         	'type' => $type,
         	'company' => $companyinfo['id'],
+            'content' => $content,
         	'start_time' => time(),
         );
-        if($type == 1){
+        if($type == 1 || $type == 2){
         	if(empty($target)){
 	            exit(json_encode(array('state' => 5,'info' => "目标地址不能为空")));
 	        }
         	if(empty($number)){
-	            exit(json_encode(array('state' => 6,'info' => "请输入正确的增发数量")));
+	            exit(json_encode(array('state' => 6,'info' => "请输入正确的数量")));
 	        }
 	        $sql = "SELECT id FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2";
 	        $targetinfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($targetinfo)){
 	            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
 	        }
+            if($type == 2){
+                if($number>$chaininfo['token_number']){
+                    exit(json_encode(array('state' => 9,'info' => "成员的Token数量不足")));
+                }
+            }
 	        $inarr['target'] = $target;
             $inarr['number'] = $number;
-        }else{
-        	if(empty($content)){
-	            exit(json_encode(array('state' => 8,'info' => "会议内容不能为空")));
-	        }
-	        $inarr['content'] = $content;
         }
+
         $re=$this->user->meetingModel->insert($inarr);
         if(empty($re)){
-            exit(json_encode(array('state' => 9,'info' => '操作失败')));
+            exit(json_encode(array('state' => 10,'info' => '操作失败')));
         }
         exit(json_encode(array('state' => 0,'info' => '操作成功')));
     }
@@ -578,7 +704,7 @@ class node_su extends actionAbstract {
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
         }
-        $sql = "SELECT id,type,target,number FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
+        $sql = "SELECT id,uid,type,target,number FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
         $meetinginfo = $this->user->meetingModel->fetchRow($sql);
         if(empty($meetinginfo)){
             exit(json_encode(array('state' => 7,'info' => "组织内无当前会议或已结束")));
@@ -606,12 +732,16 @@ class node_su extends actionAbstract {
         $sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
         $cntvote = $this->user->voteModel->fetchRow($sql);
         $yes_cnt = $cntvote['yes_cnt']/$cnt*100;
+        $yes_cnt = substr(sprintf("%.5f",$yes_cnt),0,-1);
         $no_cnt = $cntvote['no_cnt']/$cnt*100;
+        $no_cnt = substr(sprintf("%.5f",$no_cnt),0,-1);
 
         $sql = "SELECT coalesce(SUM(CASE WHEN state=1 THEN token_number ELSE 0 END),0) as yes_number,coalesce(SUM(CASE WHEN state=2 THEN token_number ELSE 0 END),0) as no_number FROM user_vote WHERE meeting=".$id;
         $sumvote = $this->user->voteModel->fetchRow($sql);
         $yes_sum = $sumvote['yes_number']/$companyinfo['token_number']*100;
+        $yes_sum = substr(sprintf("%.5f",$yes_sum),0,-1);
         $no_sum = $sumvote['no_number']/$companyinfo['token_number']*100;
+        $no_sum = substr(sprintf("%.5f",$no_sum),0,-1);
 
         if($no_sum >= $companyinfo['support'] && $no_cnt>=$companyinfo['quorum']){
             $this->user->meetingModel->update(array('end_time'=>time(),'state'=>2),"id=".$id);
@@ -620,9 +750,6 @@ class node_su extends actionAbstract {
             if($meetinginfo['type'] == 1){
                 $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
                 $targetinfo = $this->user->voteModel->fetchRow($sql);
-                if(empty($targetinfo)){
-                    exit(json_encode(array('state' =>10,'info' => "组织内无当前目标成员信息")));
-                }
 
                 $target = $targetinfo['token_number'] + $meetinginfo['number'];
                 $this->user->chainModel->update(array('token_number'=>$target,'change_time'=>time()),"id=".$targetinfo['id']);
@@ -635,6 +762,7 @@ class node_su extends actionAbstract {
                 if(!empty($chain_list)){
                     foreach ($chain_list as $key => $value) {
                         $proportion = $value['token_number']/$sum*100;
+                        $proportion = substr(sprintf("%.5f",$proportion),0,-1);
                         $uparr = array(
                             'token_proportion' => $proportion,
                             'change_time' => time()
@@ -642,6 +770,21 @@ class node_su extends actionAbstract {
                         $this->user->chainModel->update($uparr,"id=".$value['id']);
                     }
                 }
+            }else if($meetinginfo['type'] == 2){
+                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and uid='".$meetinginfo['uid']."' and state=2";
+                $launchinfo = $this->user->chainModel->fetchRow($sql);
+                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
+                $targetinfo = $this->user->chainModel->fetchRow($sql);
+
+                $number_a = $launchinfo['token_number'] - $meetinginfo['number'];
+                $proportion_a = $number_a/$companyinfo['token_number']*100;
+                $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
+                $number_b = $targetinfo['token_number'] + $meetinginfo['number'];
+                $proportion_b = $number_b/$companyinfo['token_number']*100;
+                $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
+
+                $this->user->chainModel->update(array('token_number'=>$number_a,'token_proportion'=>$proportion_a,'change_time'=>time()),"id=".$launchinfo['id']);
+                $this->user->chainModel->update(array('token_number'=>$number_b,'token_proportion'=>$proportion_b,'change_time'=>time()),"id=".$targetinfo['id']);
             }
         }
         exit(json_encode(array('state' =>0,'info' => "操作成功")));
