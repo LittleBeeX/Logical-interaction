@@ -213,7 +213,6 @@ class node_su extends actionAbstract {
         $this->loadModel('user','chain');
         $this->loadModel('user','company');
         $this->loadHelper("common");
-        $this->loadHelper('image');
         $this->loadHelper('uploader');
         $uploader = new uploader("company");
 
@@ -248,12 +247,6 @@ class node_su extends actionAbstract {
         if(!empty($_FILES['zhangcheng']['name'])){
             $upload = $uploader->start('zhangcheng','file',$companyinfo['id'].'_zhangcheng_'.time());
             $zhangcheng = $upload['path'];
-            $img_c = substr($zhangcheng,1);
-            $img_c = ROOT_PATH.$img_c;//要处理的图片
-            $image = new image($img_c);
-            $image->resizeToWidth(900);//图片宽度
-            $image->save($img_c);//保存图片
-            $image->destory();
             if(!isset($upload['status'])){
                 exit(json_encode(array('state' => 6,'info' => '文件上传失败')));
             }
