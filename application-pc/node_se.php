@@ -258,7 +258,7 @@ class node_se extends actionAbstract {
             $where = " and meeting.state=".$state;
         }*/
         if(!empty($search)){
-            $where = " and meeting.content LIKE '%".$state."%'";
+            $where .= " and meeting.content LIKE '%".$search."%'";
         }
         $where .= " GROUP BY meeting.id DESC";
         $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,chain.surname,chain.name,chain.address,

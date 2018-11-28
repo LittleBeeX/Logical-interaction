@@ -59,9 +59,12 @@
 	        		success:function(e){
 	        			if(e.state == 1){
 	        				$(e.info).parent('li').addClass('error');
-					return false;
+							return false;
+	        			}else if(e.state == 2){
+	        				alert(e.info);
 	        			}else{
 	        				alert(e.info);
+	        				window.history.back(-1);
 	        			}
 		        	} 
 	    	})
