@@ -176,7 +176,7 @@
                     <div class="control-group">
                         <label class="control-label">公司LOGO</label>
                         <div class="controls">
-                            <div class="fileupload fileupload-new" data-provides="fileupload"><input type="hidden">
+                            <div class="fileupload fileupload-new" data-provides="fileupload">
                                 <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
                             </div>
                         </div>
@@ -184,7 +184,7 @@
                     <div class="control-group">
                         <label class="control-label">公司章程</label>
                         <div class="controls">
-                            <div class="fileupload fileupload-new" data-provides="fileupload"><input type="hidden">
+                            <div class="fileupload fileupload-new" data-provides="fileupload">
                                 <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
                             </div>
                         </div>
