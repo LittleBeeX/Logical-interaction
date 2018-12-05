@@ -554,8 +554,8 @@ class node_su extends actionAbstract {
             'project' => '个人认证',
             'currency' => 2,
             'number' => 1000,
-            'way' => 0,
-            'state' => 1,
+            'way' => 2,
+            'state' => 2,
             'invoice' => 1,
             'create_time' => time()
         );
