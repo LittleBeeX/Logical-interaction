@@ -291,5 +291,44 @@ class node_se extends actionAbstract {
         exit(json_encode(array('state' => 0,'info' => $list)));
     }
 
+    //获取订单金额
+    public function order(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:"";
+        $address = filterCharacter($address);
+
+        if(empty($address)){
+            exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+        }
+        if(empty($only)){
+            exit(json_encode(array('state' => 2,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id'];
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
+        }
+
+        if($this->uid == $companyinfo['uid']){
+            $info = array('notes'=>'公司认证','money'=>10000);
+        }else{
+            $info = array('notes'=>'个人认证','money'=>1000);
+        }
+        exit(json_encode(array('state' => 0,'info' => $info)));
+
+    }
+
 }
 ?>

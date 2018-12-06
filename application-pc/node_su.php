@@ -526,6 +526,8 @@ class node_su extends actionAbstract {
         $only = filterCharacter($only);
         $address = isset($_POST['address'])?$_POST['address']:"";
         $address = filterCharacter($address);
+        $jiaoyi_address = isset($_POST['jiaoyi_address'])?$_POST['jiaoyi_address']:"";
+        $jiaoyi_address = filterCharacter($jiaoyi_address);
 
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
@@ -550,14 +552,15 @@ class node_su extends actionAbstract {
         $inarr = array(
             'type' => 3,
             'uid' => $this->uid,
-            'order_coding' =>$order_coding,
+            'order_coding' => $order_coding,
             'project' => '个人认证',
             'currency' => 2,
             'number' => 1000,
             'way' => 2,
             'state' => 2,
             'invoice' => 1,
-            'create_time' => time()
+            'create_time' => time(),
+            'address' => $jiaoyi_address,
         );
         if($this->uid == $companyinfo['uid']){
             if(!empty($companyinfo['state'])){
