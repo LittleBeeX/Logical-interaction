@@ -602,6 +602,7 @@ class node_su extends actionAbstract {
         $target = isset($_POST['target'])?$_POST['target']:"";
         $target = filterCharacter($target);
         $number = isset($_POST['number'])?(int)$_POST['number']:0;
+        $keyname = isset($_POST['keyname'])?(int)$_POST['keyname']:0;
 
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
@@ -630,6 +631,7 @@ class node_su extends actionAbstract {
         	'company' => $companyinfo['id'],
             'content' => $content,
         	'start_time' => time(),
+        	'keyname' => $keyname,
         );
         if($type == 1 || $type == 2){
         	if(empty($target)){

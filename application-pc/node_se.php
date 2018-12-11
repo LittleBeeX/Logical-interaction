@@ -261,7 +261,7 @@ class node_se extends actionAbstract {
             $where .= " and meeting.content LIKE '%".$search."%'";
         }
         $where .= " GROUP BY meeting.id DESC";
-        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,chain.surname,chain.name,chain.address,
+        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,meeting.keyname,chain.surname,chain.name,chain.address,
 				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END),0) yes_number,
 				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END),0) no_number,
 				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END),0) yes_proportion,
