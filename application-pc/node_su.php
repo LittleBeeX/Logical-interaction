@@ -573,7 +573,7 @@ class node_su extends actionAbstract {
         if(!empty($chaininfo['state'])){
             exit(json_encode(array('state' => 6,'info' => "个人认证已支付过")));
         }
-        $this->user->chain->update(array('state'=>1),"id=".$chaininfo['id']);
+        $this->user->chainModel->update(array('state'=>1),"id=".$chaininfo['id']);
 
         $re=$this->order->listModel->insert($inarr);
         if(empty($re)){
@@ -794,7 +794,6 @@ class node_su extends actionAbstract {
         $i=rand(0,25);
         $orderdate = time() - strtotime($order['startdate']);
         $re = $order['randletter'][$i].$orderdate.rand(0,9).rand(0,9).rand(0,9);
-        echo $re;
         return $re;
     }
 

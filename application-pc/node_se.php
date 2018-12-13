@@ -42,7 +42,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
         }
 
-        $sql = "SELECT name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks,contract FROM user_company WHERE only='".$only."'";
         $info = $this->user->companyModel->fetchRow($sql);
         if(empty($info)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -124,7 +124,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "钱包地址不能为空")));
         }
 
-        $sql = "SELECT id,uid,name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks FROM user_company WHERE only='".$only."'";
+        $sql = "SELECT id,uid,name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks,contract FROM user_company WHERE only='".$only."'";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
@@ -169,7 +169,7 @@ class node_se extends actionAbstract {
         if (empty($address)) {
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
         }
-        $sql = "SELECT a.name,a.address,a.only FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address='".$address."'";
+        $sql = "SELECT a.name,a.address,a.only,a.contract FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address='".$address."'";
         $list = $this->user->companyModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 2,'info' => "无公司组织信息")));
