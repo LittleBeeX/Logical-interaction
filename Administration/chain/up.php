@@ -134,6 +134,12 @@
                         </div>
                     </div>
                     <div class="control-group">
+                        <label class="control-label">公司职称</label>
+                        <div class="controls">
+                            <input type="text" name="position" value="<?=$position[$info['position']]?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <label class="control-label">钱包地址</label>
                         <div class="controls">
                             <input type="text" name="address" value="<?=$info['address']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>

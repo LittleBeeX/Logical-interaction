@@ -30,8 +30,7 @@ class node_su extends actionAbstract {
         $name = filterCharacter($name);
         $code = isset($_POST['code'])?$_POST['code']:"";
         $code = filterCharacter($code);
-        $address = isset($_POST['address'])?$_POST['address']:"";
-        $address = filterCharacter($address);
+        $address = isset($_POST['address'])?(int)$_POST['address']:0;
         $capital = isset($_POST['capital'])?$_POST['capital']:"";
         $capital = filterCharacter($capital);
         $establish = isset($_POST['establish'])?$_POST['establish']:'1970-01-01 08:00:00';
@@ -45,8 +44,12 @@ class node_su extends actionAbstract {
         if(empty($code)){
             exit(json_encode(array('state' => 2,'info' => "注册编码不能为空")));
         }
+        
+        if($address<0 || $address>28){
+            $address = 0;
+        }
         if(empty($address)){
-            exit(json_encode(array('state' => 3,'info' => "注册地址不能为空")));
+            exit(json_encode(array('state' => 3,'info' => "注册国籍不能为空")));
         }
         if(empty($capital)){
             exit(json_encode(array('state' => 4,'info' => "注册资本不能为空")));
@@ -287,6 +290,7 @@ class node_su extends actionAbstract {
         $address = filterCharacter($address);
         $passports = isset($_POST['passports'])?$_POST['passports']:'';
         $passports = filterCharacter($passports);
+        $position = isset($_POST['position'])?(int)$_POST['position']:0;
 
         if(empty($address)){
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
@@ -300,6 +304,9 @@ class node_su extends actionAbstract {
         }
         if(empty($birthtime)){
             $birthtime = 0;
+        }
+        if($position<0 || $position>4){
+            $position = 0;
         }
 
         $picture = "";
@@ -339,6 +346,7 @@ class node_su extends actionAbstract {
                 'picture' => $picture,
                 'create_time' => time(),
                 'passports' => $passports,
+                'position' => $position,
             );
             $re=$this->user->chainModel->insert($inarr);
         }else{
@@ -376,6 +384,9 @@ class node_su extends actionAbstract {
             }
             if(!empty($passports) && $passports != $chaininfo['passports']){
                 $uparr['passports'] = $passports;
+            }
+            if(!empty($position) && $position != $chaininfo['position']){
+                $uparr['position'] = $position;
             }
             if($chaininfo['state'] == 3){
                 $uparr['state'] = 1;

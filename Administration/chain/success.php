@@ -109,8 +109,8 @@
                                 <td><?=$v['token_proportion']?></td>
                                 <td><?=date('Y-m-d',$v['create_time'])?></td>
                                 <td>
-                                    <a data-original-title="查看详情" rel="tooltip" class="btn btn-small btn-primary" href="<?=$this->url("company/se")?>?id=<?=$v["id"]?>"><i class="icon-eye-open"></i></a>
-                                    <a data-original-title="处理" rel="tooltip" class="btn btn-small btn-success" href="<?=$this->url("company/up")?>?id=<?=$v["id"]?>"><i class="icon-edit"></i></a>
+                                    <a data-original-title="查看详情" rel="tooltip" class="btn btn-small btn-primary" href="<?=$this->url("chain/se")?>?id=<?=$v["id"]?>"><i class="icon-eye-open"></i></a>
+                                    <a data-original-title="处理" rel="tooltip" class="btn btn-small btn-success" href="<?=$this->url("chain/up")?>?id=<?=$v["id"]?>"><i class="icon-edit"></i></a>
                                 </td>
                             </tr>
                         <?}?>

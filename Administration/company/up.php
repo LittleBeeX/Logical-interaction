@@ -8,266 +8,371 @@
     }
 </style>
 <div id="main">
-<div class="container-fluid">
-    <div class="page-header">
-        <div class="pull-left">
-            <h1><?=$this->menu?></h1>
-        </div>
-        <div class="pull-right">
-            <ul class="stats">
-                <li class='lightred'>
-                    <i class="icon-calendar"></i>
-                    <div class="details">
-                        <span class="big"></span>
-                        <span></span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="breadcrumbs">
-        <ul>
-            <li>
-                <a href="javascript:();"><?=$headname?></a>
-                <i class="icon-angle-right"></i>
-            </li>
-            <li>
-                <a href="javascript:();"><?=$this->title?></a>
-                <i class="icon-angle-right"></i>
-            </li>
-            <li>
-                <a href="javascript:();"><?=$this->menu?></a>
-            </li>
-        </ul>
-        <div class="close-bread">
-            <a href="javascript:();"><i class="icon-remove"></i></a>
-        </div>
-    </div>
-        <div class="row-fluid">
-        <div class="span12">
-        
-            <div class="box">
-                <div class="box-content">
-                    <ul class="tiles tiles-center nomargin">
-                        <li class="lightgrey">
-                        <?if($r1!=0){?>
-                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r1;?></font></font></span>
-                        <?}?>
-                            <a href="<?=$this->url("company/input")?>"><span><i class="icon-book"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">填写信息</font></font></span></a>
-                        </li>
-                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
-                        <li class="lightred">
-                        <?if($r2!=0){?>
-                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r2;?></font></font></span>
-                        <?}?>
-                            <a href="<?=$this->url("company/stay")?>"><span><i class="icon-print"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">待审列表</font></font></span></a>
-                        </li>
-                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
-                        <li class="blue">
-                        <?if($r3!=0){?>
-                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r3;?></font></font></span>
-                        <?}?>
-                            <a href="<?=$this->url("company/fail")?>"><span><i class="icon-bookmark"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">审核失败</font></font></span></a>
-                        </li>
-                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
-                        <li class="brown">
-                        <?if($r4!=0){?>
-                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r4;?></font></font></span>
-                        <?}?>
-                            <a href="<?=$this->url("company/success")?>"><span><i class="icon-exchange"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">审核成功</font></font></span></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="box box-color box-bordered">
-                <div class="box-title">
-                    <h3>
-                        <i class="icon-user"></i>
-                        公司信息详情
-                    </h3>
-                    <div class="actions">
-                        <a href="#" class="btn btn-mini content-slideUp"><i class="icon-angle-down"></i></a>
-                    </div>
-                </div>
-                <div class="box-content nopadding">
-                <form class="form-horizontal form-bordered form-validate" method="POST" action="/index.php/cn/sysadmin/company/up_ajax" name="form" id="form" enctype="multipart/form-data" novalidate="novalidate">
-                    <div class="control-group">
-                        <label class="control-label">公司名称</label>
-                        <div class="controls">
-                            <input type="text" name="name" value="<?=$info['name']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">唯一标识</label>
-                        <div class="controls">
-                            <input type="text" name="only" value="<?=$info['only']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">注册编码</label>
-                        <div class="controls">
-                            <input type="text" name="code" value="<?=$info['code']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">注册地址</label>
-                        <div class="controls">
-                            <input type="text" name="address" value="<?=$info['address']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">注册资本</label>
-                        <div class="controls">
-                            <input type="text" name="capital" value="<?=$info['capital']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">股权占比（%）</label>
-                        <div class="controls">
-                            <input type="text" name="support" value="<?=$info['support']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">人数占比（%）</label>
-                        <div class="controls">
-                            <input type="text" name="quorum" value="<?=$info['quorum']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">持续时间（H）</label>
-                        <div class="controls">
-                            <input type="text" name="quorum" value="<?=$info['quorum']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">令牌名称</label>
-                        <div class="controls">
-                            <input type="text" name="token_name" value="<?=$info['token_name']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">令牌符号</label>
-                        <div class="controls">
-                            <input type="text" name="token_symbol" value="<?=$info['token_symbol']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">令牌数量</label>
-                        <div class="controls">
-                            <input type="text" name="token_number" value="<?=$info['token_number']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">信息状态</label>
-                        <div class="controls">
-                            <select name="state" class="input-xlarge valid">
-                            <?foreach ($state as $k_state => $v_state) {?>
-                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
-                            <?}?>
-                            </select>
-                        </div>
-                    </div>
-
-                <?if($info['state']>0){?>
-                    <div class="control-group">
-                        <label class="control-label">审核备注</label>
-                        <div class="controls">
-                            <textarea style="resize: none;height: 120px;width: 360px;" name="remarks" class="input-xlarge" disabled="disabled"><?=$info['remarks']?></textarea>
-                        </div>
-                    </div>
-                <?}?>
-                <?if($info['state']==2){?>
-                    <div class="control-group">
-                        <label class="control-label">公司LOGO</label>
-                        <div class="controls">
-                            <div class="fileupload fileupload-new" data-provides="fileupload">
-                                <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">公司章程</label>
-                        <div class="controls">
-                            <div class="fileupload fileupload-new" data-provides="fileupload">
-                                <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
-                            </div>
-                        </div>
-                    </div>
-                <?}?>
-                    
-                    <div class="form-actions">
-                        <input type="hidden" name="id" value="<?=$info['id']?>">
-                    <?if($info['state']==1 || $info['state']==3){?>
-                        <input type="submit" id="btn" class="btn btn-primary" value="确认修改">
-                        <input type="reset" class="btn btn-primary" value="重置" style="margin-left: 20px;width: 60px;margin-right: 20px;">
-                    <?}?>
-                        <input type="button" id="frist" class="btn btn-primary" value="返回" style="width: 60px;">
-                    </div>
-                </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="box box-color box-bordered">
-                <div class="box-title">
-                    <h3>
-                        <i class="icon-th-list"></i>
-                        成员信息
-                    </h3>
-                    <div class="actions">
-                        <a href="#" class="btn btn-mini content-slideUp"><i class="icon-angle-down"></i></a>
-                    </div>
-                </div>
-                <div class="box-content nopadding">
-                    <table class="table table-hover table-nomargin dataTable table-bordered" width="100%">
-                        <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>姓名</th>
-                                <th>性别</th>
-                                <th>国籍</th>
-                                <th>护照编号</th>
-                                <th>钱包地址</th>
-                                <th>持有TOKEN数</th>
-                                <th>股权占比（%）</th>
-                                <th>状态</th>
-                                <th>创建时间</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <?foreach($list as $k=>$v){?>
-                            <tr>
-                                <td><?=$k+1?></td>
-                                <td><?=$v['surname'].$v['name']?></td>
-                                <td><?=$sex[$v['sex']]?></td>
-                                <td><?=$phone_codes[$v['nationality']]['country']?></td>
-                                <td><?=$v['passports']?></td>
-                                <td><?=$v['address']?></td>
-                                <td><?=$v['token_number']?></td>
-                                <td><?=$v['token_proportion']?></td>
-                                <td><?=$state[$v['state']]?></td>
-                                <td><?=date('Y-m-d',$v['create_time'])?></td>
-                                <td>
-                                    <a data-original-title="查看详情" rel="tooltip" class="btn btn-small btn-primary" href="<?=$this->url("chain/se")?>?id=<?=$v["id"]?>"><i class="icon-eye-open"></i></a>
-                                <?if($v['state']==1 || $v['state']==3){?>
-                                    <a data-original-title="处理" rel="tooltip" class="btn btn-small btn-success" href="<?=$this->url("chain/up")?>?id=<?=$v["id"]?>"><i class="icon-edit"></i></a>
-                                <?}?>
-                                </td>
-                            </tr>
-                        <?}?>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
+	<div class="container-fluid">
+	    <div class="page-header">
+	        <div class="pull-left">
+	            <h1><?=$this->menu?></h1>
+	        </div>
+	        <div class="pull-right">
+	            <ul class="stats">
+	                <li class='lightred'>
+	                    <i class="icon-calendar"></i>
+	                    <div class="details">
+	                        <span class="big"></span>
+	                        <span></span>
+	                    </div>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	    <div class="breadcrumbs">
+	        <ul>
+	            <li>
+	                <a href="javascript:();"><?=$headname?></a>
+	                <i class="icon-angle-right"></i>
+	            </li>
+	            <li>
+	                <a href="javascript:();"><?=$this->title?></a>
+	                <i class="icon-angle-right"></i>
+	            </li>
+	            <li>
+	                <a href="javascript:();"><?=$this->menu?></a>
+	            </li>
+	        </ul>
+	        <div class="close-bread">
+	            <a href="javascript:();"><i class="icon-remove"></i></a>
+	        </div>
+	    </div>
+	        <div class="row-fluid">
+	        <div class="span12">
+	        
+	            <div class="box">
+	                <div class="box-content">
+	                    <ul class="tiles tiles-center nomargin">
+	                        <li class="lightgrey">
+	                        <?if($r1!=0){?>
+	                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r1;?></font></font></span>
+	                        <?}?>
+	                            <a href="<?=$this->url("company/input")?>"><span><i class="icon-book"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">填写信息</font></font></span></a>
+	                        </li>
+	                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
+	                        <li class="lightred">
+	                        <?if($r2!=0){?>
+	                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r2;?></font></font></span>
+	                        <?}?>
+	                            <a href="<?=$this->url("company/stay")?>"><span><i class="icon-print"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">待审列表</font></font></span></a>
+	                        </li>
+	                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
+	                        <li class="blue">
+	                        <?if($r3!=0){?>
+	                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r3;?></font></font></span>
+	                        <?}?>
+	                            <a href="<?=$this->url("company/fail")?>"><span><i class="icon-bookmark"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">审核失败</font></font></span></a>
+	                        </li>
+	                        &nbsp;&nbsp;<i class="icon-arrow-right"></i>
+	                        <li class="brown">
+	                        <?if($r4!=0){?>
+	                            <span class="label label-info"><font style="vertical-align: inherit;"><font  style="vertical-align: inherit;"><?=$r4;?></font></font></span>
+	                        <?}?>
+	                            <a href="<?=$this->url("company/success")?>"><span><i class="icon-exchange"></i></span><span class="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">审核成功</font></font></span></a>
+	                        </li>
+	                    </ul>
+	                </div>
+	            </div>
+	            <div class="box box-color box-bordered">
+	                <div class="box-title">
+	                    <h3>
+	                        <i class="icon-user"></i>
+	                        公司信息详情
+	                    </h3>
+	                    <div class="actions">
+	                        <a href="#" class="btn btn-mini content-slideUp"><i class="icon-angle-down"></i></a>
+	                    </div>
+	                </div>
+	                <div class="box-content nopadding">
+	                <form class="form-horizontal form-bordered form-validate" method="POST" action="/index.php/cn/sysadmin/company/up_ajax" name="form" id="form" enctype="multipart/form-data" novalidate="novalidate">
+	                    <div class="control-group">
+	                        <label class="control-label">公司名称</label>
+	                        <div class="controls">
+	                            <input type="text" name="name" value="<?=$info['name']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">唯一标识</label>
+	                        <div class="controls">
+	                            <input type="text" name="only" value="<?=$info['only']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">注册编码</label>
+	                        <div class="controls">
+	                            <input type="text" name="code" value="<?=$info['code']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">注册国籍</label>
+	                        <div class="controls">
+	                            <input type="text" name="address" value="<?=$phone_codes[$info['address']]['country']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">注册资本</label>
+	                        <div class="controls">
+	                            <input type="text" name="capital" value="<?=$info['capital']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">成立日期</label>
+	                        <div class="controls">
+	                            <input type="text" name="establish" value="<?=date('Y-m-d',$info['establish'])?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">股权占比（%）</label>
+	                        <div class="controls">
+	                            <input type="text" name="support" value="<?=$info['support']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">人数占比（%）</label>
+	                        <div class="controls">
+	                            <input type="text" name="quorum" value="<?=$info['quorum']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">持续时间（H）</label>
+	                        <div class="controls">
+	                            <input type="text" name="duration" value="<?=$info['duration']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">令牌名称</label>
+	                        <div class="controls">
+	                            <input type="text" name="token_name" value="<?=$info['token_name']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">令牌符号</label>
+	                        <div class="controls">
+	                            <input type="text" name="token_symbol" value="<?=$info['token_symbol']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">令牌数量</label>
+	                        <div class="controls">
+	                            <input type="text" name="token_number" value="<?=$info['token_number']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">信息状态</label>
+	                        <div class="controls">
+	                            <select name="state" class="input-xlarge valid">
+	                            <?foreach ($state as $k_state => $v_state) {?>
+	                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
+	                            <?}?>
+	                            </select>
+	                        </div>
+	                    </div>
+	                <?if($info['state']==2){?>
+	                    <div class="control-group">
+	                        <label class="control-label">合约地址</label>
+	                        <div class="controls">
+	                        <?if(!empty($info['contract'])){?>
+	                            <input type="text" name="contract" value="<?=$info['contract']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        <?}else{?>
+	                            <input type="button" id="contract" class="btn btn-primary" value="生成合约">
+	                        <?}?>
+	                        </div>
+	                    </div>
+	                <?}?>
+	                
+	                <?if($info['state']==2 && !empty($info['contract'])){?>
+	                    <div class="control-group">
+	                        <label class="control-label">记录地址</label>
+	                        <div class="controls">
+	                        <?if(!empty($info['record'])){?>
+	                            <input type="text" name="record" value="<?=$info['record']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+	                        <?}else{?>
+	                            <input type="button" id="record" class="btn btn-primary" value="记录信息">
+	                        <?}?>
+	                        </div>
+	                    </div>
+	                <?}?>
+	
+	                <?if($info['state']>0){?>
+	                    <div class="control-group">
+	                        <label class="control-label">审核备注</label>
+	                        <div class="controls">
+	                            <textarea style="resize: none;height: 120px;width: 360px;" name="remarks" class="input-xlarge" disabled="disabled"><?=$info['remarks']?></textarea>
+	                        </div>
+	                    </div>
+	                <?}?>
+	                <?if($info['state']==2){?>
+	                    <div class="control-group">
+	                        <label class="control-label">公司LOGO</label>
+	                        <div class="controls">
+	                            <div class="fileupload fileupload-new" data-provides="fileupload">
+	                                <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="control-group">
+	                        <label class="control-label">公司章程</label>
+	                        <div class="controls">
+	                            <div class="fileupload fileupload-new" data-provides="fileupload">
+	                                <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="<?=$info['logo']?>"></div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                <?}?>
+	                    
+	                    <div class="form-actions">
+	                        <input type="hidden" name="id" value="<?=$info['id']?>">
+	                    <?if($info['state']==1 || $info['state']==3){?>
+	                        <input type="submit" id="btn" class="btn btn-primary" value="确认修改">
+	                        <input type="reset" class="btn btn-primary" value="重置" style="margin-left: 20px;width: 60px;margin-right: 20px;">
+	                    <?}?>
+	                        <input type="button" id="frist" class="btn btn-primary" value="返回" style="width: 60px;">
+	                    </div>
+	                </form>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="row-fluid">
+	        <div class="span12">
+	            <div class="box box-color box-bordered">
+	                <div class="box-title">
+	                    <h3>
+	                        <i class="icon-th-list"></i>
+	                        成员信息
+	                    </h3>
+	                    <div class="actions">
+	                        <a href="#" class="btn btn-mini content-slideUp"><i class="icon-angle-down"></i></a>
+	                    </div>
+	                </div>
+	                <div class="box-content nopadding">
+	                    <table class="table table-hover table-nomargin dataTable table-bordered" width="100%">
+	                        <thead>
+	                            <tr>
+	                                <th>序号</th>
+	                                <th>姓名</th>
+	                                <th>性别</th>
+	                                <th>国籍</th>
+	                                <th>护照编号</th>
+	                                <th>钱包地址</th>
+	                                <th>持有TOKEN数</th>
+	                                <th>股权占比（%）</th>
+	                                <th>状态</th>
+	                                <th>创建时间</th>
+	                                <th>操作</th>
+	                            </tr>
+	                        </thead>
+	                        <?foreach($list as $k=>$v){?>
+	                            <tr>
+	                                <td><?=$k+1?></td>
+	                                <td><?=$v['surname'].$v['name']?></td>
+	                                <td><?=$sex[$v['sex']]?></td>
+	                                <td><?=$phone_codes[$v['nationality']]['country']?></td>
+	                                <td><?=$v['passports']?></td>
+	                                <td><?=$v['address']?></td>
+	                                <td><?=$v['token_number']?></td>
+	                                <td><?=$v['token_proportion']?></td>
+	                                <td><?=$state[$v['state']]?></td>
+	                                <td><?=date('Y-m-d',$v['create_time'])?></td>
+	                                <td>
+	                                    <a data-original-title="查看详情" rel="tooltip" class="btn btn-small btn-primary" href="<?=$this->url("chain/se")?>?id=<?=$v["id"]?>"><i class="icon-eye-open"></i></a>
+	                                <?if($v['state']==1 || $v['state']==3){?>
+	                                    <a data-original-title="处理" rel="tooltip" class="btn btn-small btn-success" href="<?=$this->url("chain/up")?>?id=<?=$v["id"]?>"><i class="icon-edit"></i></a>
+	                                <?}?>
+	                                </td>
+	                            </tr>
+	                        <?}?>
+	                    </table>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 </div>
-</div>
 
+<script src="/public/plugins/web3/web3_1.0.js"></script>
 <script type="text/javascript">
+	var web3js,myAddress;
+	var user_bytecode ={
+		"linkReferences": {},
+		"object": "60806040526020604051908101604052806000815250600690805190602001906200002c929190620002dd565b5060206040519081016040528060008152506007908051906020019062000055929190620002dd565b5060006008556018600960026101000a81548160ff021916908360ff1602179055506000600a553480156200008957600080fd5b506040516200256938038062002569833981018060405281019080805182019291906020018051820192919060200180519060200190929190805190602001909291908051906020019092919080519060200190929190505050336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555085600690805190602001906200013b929190620002dd565b50846007908051906020019062000154929190620002dd565b50601260ff16600a0a840260088190555082600960006101000a81548160ff021916908360ff16021790555081600960016101000a81548160ff021916908360ff16021790555080600960026101000a81548160ff021916908360ff1602179055506200021a600854600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054620002c064010000000002620020c7179091906401000000009004565b600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555060018060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055505050505050506200038c565b60008183019050828110151515620002d457fe5b80905092915050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106200032057805160ff191683800117855562000351565b8280016001018555821562000351579182015b828111156200035057825182559160200191906001019062000333565b5b50905062000360919062000364565b5090565b6200038991905b80821115620003855760008160009055506001016200036b565b5090565b90565b6121cd806200039c6000396000f300608060405260043610610112576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806306fdde0314610117578063095ea7b3146101a75780630e4991b31461020c57806318160ddd146102dd57806323b872dd146103085780632ff2e9dc1461038d578063313ce567146103b857806340c10f19146103e95780634847a79c1461044e57806370a082311461049b5780638da5cb5b146104f257806395d89b4114610549578063a9059cbb146105d9578063b414d4b61461063e578063bf120ae514610699578063c8d90df814610700578063cb71253514610757578063dd62ed3e146107c4578063f2fde38b1461083b578063fbce623f1461087e575b600080fd5b34801561012357600080fd5b5061012c6108cf565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561016c578082015181840152602081019050610151565b50505050905090810190601f1680156101995780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b3480156101b357600080fd5b506101f2600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061096d565b604051808215151515815260200191505060405180910390f35b34801561021857600080fd5b506102c760048036038101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050610a5f565b6040518082815260200191505060405180910390f35b3480156102e957600080fd5b506102f2610d3b565b6040518082815260200191505060405180910390f35b34801561031457600080fd5b50610373600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610d41565b604051808215151515815260200191505060405180910390f35b34801561039957600080fd5b506103a2611260565b6040518082815260200191505060405180910390f35b3480156103c457600080fd5b506103cd611265565b604051808260ff1660ff16815260200191505060405180910390f35b3480156103f557600080fd5b50610434600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061126a565b604051808215151515815260200191505060405180910390f35b34801561045a57600080fd5b50610499600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061143d565b005b3480156104a757600080fd5b506104dc600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506114a4565b6040518082815260200191505060405180910390f35b3480156104fe57600080fd5b506105076114ed565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561055557600080fd5b5061055e611512565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561059e578082015181840152602081019050610583565b50505050905090810190601f1680156105cb5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b3480156105e557600080fd5b50610624600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506115b0565b604051808215151515815260200191505060405180910390f35b34801561064a57600080fd5b5061067f600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611935565b604051808215151515815260200191505060405180910390f35b3480156106a557600080fd5b506106e6600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803515159060200190929190505050611955565b604051808215151515815260200191505060405180910390f35b34801561070c57600080fd5b50610741600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611a4f565b6040518082815260200191505060405180910390f35b34801561076357600080fd5b506107c2600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050611a67565b005b3480156107d057600080fd5b50610825600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611ad0565b6040518082815260200191505060405180910390f35b34801561084757600080fd5b5061087c600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611b57565b005b34801561088a57600080fd5b506108b560048036038101908080359060200190929190803515159060200190929190505050611cac565b604051808215151515815260200191505060405180910390f35b60068054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156109655780601f1061093a57610100808354040283529160200191610965565b820191906000526020600020905b81548152906001019060200180831161094857829003601f168201915b505050505081565b600081600560003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925846040518082815260200191505060405180910390a36001905092915050565b600061012060405190810160405280600081526020018781526020018673ffffffffffffffffffffffffffffffffffffffff1681526020018573ffffffffffffffffffffffffffffffffffffffff168152602001838152602001848152602001600081526020016000815260200142815250600b6000600a548152602001908152602001600020600082015181600001556020820151816001015560408201518160020160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060608201518160030160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506080820151816004019080519060200190610ba49291906120fc565b5060a0820151816005015560c0820151816006015560e0820151816007015561010082015181600801559050506001600b6000600a54815260200190815260200160002060090160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555082826040518082805190602001908083835b602083101515610c765780518252602082019150602081019050602083039250610c51565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020427f4739960e25045e532fca353a79000ead7e0b2f0707bc28b826630e1cfa2de6c988600a54604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a4610d276001600a546120c790919063ffffffff16565b600a81905550600a54905095945050505050565b60085481565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff1614151515610d7e57600080fd5b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548211151515610dcc57600080fd5b600560008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548211151515610e5757600080fd5b600160008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16151515610eb057600080fd5b600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff16151515610f0957600080fd5b610f5b82600360008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120e390919063ffffffff16565b600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550610ff082600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120c790919063ffffffff16565b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055506110c282600560008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120e390919063ffffffff16565b600560008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555060018060008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508273ffffffffffffffffffffffffffffffffffffffff168473ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040518082815260200191505060405180910390a3600190509392505050565b600081565b601281565b6000601260ff16600a0a8202915061128d826008546120c790919063ffffffff16565b6008819055506112e582600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120c790919063ffffffff16565b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555060018060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508273ffffffffffffffffffffffffffffffffffffffff167f0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885836040518082815260200191505060405180910390a28273ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040518082815260200191505060405180910390a36001905092915050565b6000600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555061149f82826115b0565b505050565b6000600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549050919050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60078054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156115a85780601f1061157d576101008083540402835291602001916115a8565b820191906000526020600020905b81548152906001019060200180831161158b57829003601f168201915b505050505081565b60008073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16141515156115ed57600080fd5b600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054821115151561163b57600080fd5b600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff1615151561169457600080fd5b600260003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054421115156116e157600080fd5b670de0b6b3a76400008202915061174082600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120e390919063ffffffff16565b600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055506117d582600360008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546120c790919063ffffffff16565b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555060018060003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555060018060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055508273ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef846040518082815260200191505060405180910390a36001905092915050565b60016020528060005260406000206000915054906101000a900460ff1681565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156119b257600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16141515156119ee57600080fd5b81600160008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055506001905092915050565b60026020528060005260406000206000915090505481565b6000600160008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff021916908315150217905550611aca838383610d41565b50505050565b6000600560008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054905092915050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515611bb257600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151515611bee57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b6000603c600960029054906101000a900460ff160260ff16600b6000858152602001908152602001600020600801540142101515611ce957600080fd5b6000600b600085815260200190815260200160002060000154141515611d0e57600080fd5b600b600084815260200190815260200160002060090160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515611d7a57600080fd5b8115611f7f57611de8600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054600b6000868152602001908152602001600020600601546120c790919063ffffffff16565b600b6000858152602001908152602001600020600601819055506002600854811515611e1057fe5b04600b600085815260200190815260200160002060060154111515611e3457600080fd5b6001600b6000858152602001908152602001600020600101541415611eaf57611ea9600b600085815260200190815260200160002060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16600b60008681526020019081526020016000206005015461126a565b50611f5e565b6002600b6000858152602001908152602001600020600101541415611f5d57611f5b600b600085815260200190815260200160002060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16600b600086815260200190815260200160002060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16600b600087815260200190815260200160002060050154610d41565b505b5b6001600b600085815260200190815260200160002060000181905550612051565b611fe7600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054600b6000868152602001908152602001600020600701546120c790919063ffffffff16565b600b600085815260200190815260200160002060070181905550600260085481151561200f57fe5b04600b6000858152602001908152602001600020600701541015151561203457600080fd5b6002600b6000858152602001908152602001600020600001819055505b6000600b600085815260200190815260200160002060090160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff0219169083151502179055506001905092915050565b600081830190508281101515156120da57fe5b80905092915050565b60008282111515156120f157fe5b818303905092915050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061213d57805160ff191683800117855561216b565b8280016001018555821561216b579182015b8281111561216a57825182559160200191906001019061214f565b5b509050612178919061217c565b5090565b61219e91905b8082111561219a576000816000905550600101612182565b5090565b905600a165627a7a7230582026efc43c68e7bf49575e0bef8140dee754e65d7ade84fbf3f9ec834ef57655480029",
+		"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x20 PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 PUSH1 0x0 DUP2 MSTORE POP PUSH1 0x6 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 PUSH3 0x2C SWAP3 SWAP2 SWAP1 PUSH3 0x2DD JUMP JUMPDEST POP PUSH1 0x20 PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 PUSH1 0x0 DUP2 MSTORE POP PUSH1 0x7 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 PUSH3 0x55 SWAP3 SWAP2 SWAP1 PUSH3 0x2DD JUMP JUMPDEST POP PUSH1 0x0 PUSH1 0x8 SSTORE PUSH1 0x18 PUSH1 0x9 PUSH1 0x2 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 PUSH1 0xFF AND MUL OR SWAP1 SSTORE POP PUSH1 0x0 PUSH1 0xA SSTORE CALLVALUE DUP1 ISZERO PUSH3 0x89 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x40 MLOAD PUSH3 0x2569 CODESIZE SUB DUP1 PUSH3 0x2569 DUP4 CODECOPY DUP2 ADD DUP1 PUSH1 0x40 MSTORE DUP2 ADD SWAP1 DUP1 DUP1 MLOAD DUP3 ADD SWAP3 SWAP2 SWAP1 PUSH1 0x20 ADD DUP1 MLOAD DUP3 ADD SWAP3 SWAP2 SWAP1 PUSH1 0x20 ADD DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP CALLER PUSH1 0x0 DUP1 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP DUP6 PUSH1 0x6 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 PUSH3 0x13B SWAP3 SWAP2 SWAP1 PUSH3 0x2DD JUMP JUMPDEST POP DUP5 PUSH1 0x7 SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 PUSH3 0x154 SWAP3 SWAP2 SWAP1 PUSH3 0x2DD JUMP JUMPDEST POP PUSH1 0x12 PUSH1 0xFF AND PUSH1 0xA EXP DUP5 MUL PUSH1 0x8 DUP2 SWAP1 SSTORE POP DUP3 PUSH1 0x9 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 PUSH1 0xFF AND MUL OR SWAP1 SSTORE POP DUP2 PUSH1 0x9 PUSH1 0x1 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 PUSH1 0xFF AND MUL OR SWAP1 SSTORE POP DUP1 PUSH1 0x9 PUSH1 0x2 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 PUSH1 0xFF AND MUL OR SWAP1 SSTORE POP PUSH3 0x21A PUSH1 0x8 SLOAD PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH3 0x2C0 PUSH5 0x100000000 MUL PUSH3 0x20C7 OR SWAP1 SWAP2 SWAP1 PUSH5 0x100000000 SWAP1 DIV JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP POP POP POP POP POP POP PUSH3 0x38C JUMP JUMPDEST PUSH1 0x0 DUP2 DUP4 ADD SWAP1 POP DUP3 DUP2 LT ISZERO ISZERO ISZERO PUSH3 0x2D4 JUMPI INVALID JUMPDEST DUP1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST DUP3 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV SWAP1 PUSH1 0x0 MSTORE PUSH1 0x20 PUSH1 0x0 KECCAK256 SWAP1 PUSH1 0x1F ADD PUSH1 0x20 SWAP1 DIV DUP2 ADD SWAP3 DUP3 PUSH1 0x1F LT PUSH3 0x320 JUMPI DUP1 MLOAD PUSH1 0xFF NOT AND DUP4 DUP1 ADD OR DUP6 SSTORE PUSH3 0x351 JUMP JUMPDEST DUP3 DUP1 ADD PUSH1 0x1 ADD DUP6 SSTORE DUP3 ISZERO PUSH3 0x351 JUMPI SWAP2 DUP3 ADD JUMPDEST DUP3 DUP2 GT ISZERO PUSH3 0x350 JUMPI DUP3 MLOAD DUP3 SSTORE SWAP2 PUSH1 0x20 ADD SWAP2 SWAP1 PUSH1 0x1 ADD SWAP1 PUSH3 0x333 JUMP JUMPDEST JUMPDEST POP SWAP1 POP PUSH3 0x360 SWAP2 SWAP1 PUSH3 0x364 JUMP JUMPDEST POP SWAP1 JUMP JUMPDEST PUSH3 0x389 SWAP2 SWAP1 JUMPDEST DUP1 DUP3 GT ISZERO PUSH3 0x385 JUMPI PUSH1 0x0 DUP2 PUSH1 0x0 SWAP1 SSTORE POP PUSH1 0x1 ADD PUSH3 0x36B JUMP JUMPDEST POP SWAP1 JUMP JUMPDEST SWAP1 JUMP JUMPDEST PUSH2 0x21CD DUP1 PUSH3 0x39C PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN STOP PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x4 CALLDATASIZE LT PUSH2 0x112 JUMPI PUSH1 0x0 CALLDATALOAD PUSH29 0x100000000000000000000000000000000000000000000000000000000 SWAP1 DIV PUSH4 0xFFFFFFFF AND DUP1 PUSH4 0x6FDDE03 EQ PUSH2 0x117 JUMPI DUP1 PUSH4 0x95EA7B3 EQ PUSH2 0x1A7 JUMPI DUP1 PUSH4 0xE4991B3 EQ PUSH2 0x20C JUMPI DUP1 PUSH4 0x18160DDD EQ PUSH2 0x2DD JUMPI DUP1 PUSH4 0x23B872DD EQ PUSH2 0x308 JUMPI DUP1 PUSH4 0x2FF2E9DC EQ PUSH2 0x38D JUMPI DUP1 PUSH4 0x313CE567 EQ PUSH2 0x3B8 JUMPI DUP1 PUSH4 0x40C10F19 EQ PUSH2 0x3E9 JUMPI DUP1 PUSH4 0x4847A79C EQ PUSH2 0x44E JUMPI DUP1 PUSH4 0x70A08231 EQ PUSH2 0x49B JUMPI DUP1 PUSH4 0x8DA5CB5B EQ PUSH2 0x4F2 JUMPI DUP1 PUSH4 0x95D89B41 EQ PUSH2 0x549 JUMPI DUP1 PUSH4 0xA9059CBB EQ PUSH2 0x5D9 JUMPI DUP1 PUSH4 0xB414D4B6 EQ PUSH2 0x63E JUMPI DUP1 PUSH4 0xBF120AE5 EQ PUSH2 0x699 JUMPI DUP1 PUSH4 0xC8D90DF8 EQ PUSH2 0x700 JUMPI DUP1 PUSH4 0xCB712535 EQ PUSH2 0x757 JUMPI DUP1 PUSH4 0xDD62ED3E EQ PUSH2 0x7C4 JUMPI DUP1 PUSH4 0xF2FDE38B EQ PUSH2 0x83B JUMPI DUP1 PUSH4 0xFBCE623F EQ PUSH2 0x87E JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x123 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x12C PUSH2 0x8CF JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE DUP4 DUP2 DUP2 MLOAD DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 DUP1 DUP4 DUP4 PUSH1 0x0 JUMPDEST DUP4 DUP2 LT ISZERO PUSH2 0x16C JUMPI DUP1 DUP3 ADD MLOAD DUP2 DUP5 ADD MSTORE PUSH1 0x20 DUP2 ADD SWAP1 POP PUSH2 0x151 JUMP JUMPDEST POP POP POP POP SWAP1 POP SWAP1 DUP2 ADD SWAP1 PUSH1 0x1F AND DUP1 ISZERO PUSH2 0x199 JUMPI DUP1 DUP3 SUB DUP1 MLOAD PUSH1 0x1 DUP4 PUSH1 0x20 SUB PUSH2 0x100 EXP SUB NOT AND DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP JUMPDEST POP SWAP3 POP POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x1B3 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x1F2 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x96D JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x218 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x2C7 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 DUP3 ADD DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 DUP1 DUP1 PUSH1 0x1F ADD PUSH1 0x20 DUP1 SWAP2 DIV MUL PUSH1 0x20 ADD PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 SWAP4 SWAP3 SWAP2 SWAP1 DUP2 DUP2 MSTORE PUSH1 0x20 ADD DUP4 DUP4 DUP1 DUP3 DUP5 CALLDATACOPY DUP3 ADD SWAP2 POP POP POP POP POP POP SWAP2 SWAP3 SWAP2 SWAP3 SWAP1 POP POP POP PUSH2 0xA5F JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x2E9 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x2F2 PUSH2 0xD3B JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x314 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x373 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0xD41 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x399 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x3A2 PUSH2 0x1260 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x3C4 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x3CD PUSH2 0x1265 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 PUSH1 0xFF AND PUSH1 0xFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x3F5 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x434 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x126A JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x45A JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x499 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x143D JUMP JUMPDEST STOP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x4A7 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x4DC PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x14A4 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x4FE JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x507 PUSH2 0x14ED JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x555 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x55E PUSH2 0x1512 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP1 PUSH1 0x20 ADD DUP3 DUP2 SUB DUP3 MSTORE DUP4 DUP2 DUP2 MLOAD DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 DUP1 DUP4 DUP4 PUSH1 0x0 JUMPDEST DUP4 DUP2 LT ISZERO PUSH2 0x59E JUMPI DUP1 DUP3 ADD MLOAD DUP2 DUP5 ADD MSTORE PUSH1 0x20 DUP2 ADD SWAP1 POP PUSH2 0x583 JUMP JUMPDEST POP POP POP POP SWAP1 POP SWAP1 DUP2 ADD SWAP1 PUSH1 0x1F AND DUP1 ISZERO PUSH2 0x5CB JUMPI DUP1 DUP3 SUB DUP1 MLOAD PUSH1 0x1 DUP4 PUSH1 0x20 SUB PUSH2 0x100 EXP SUB NOT AND DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP JUMPDEST POP SWAP3 POP POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x5E5 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x624 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x15B0 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x64A JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x67F PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1935 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x6A5 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x6E6 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD ISZERO ISZERO SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1955 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x70C JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x741 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1A4F JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x763 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x7C2 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1A67 JUMP JUMPDEST STOP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x7D0 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x825 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1AD0 JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x847 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x87C PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1B57 JUMP JUMPDEST STOP JUMPDEST CALLVALUE DUP1 ISZERO PUSH2 0x88A JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH2 0x8B5 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 DUP1 DUP1 CALLDATALOAD SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 DUP1 CALLDATALOAD ISZERO ISZERO SWAP1 PUSH1 0x20 ADD SWAP1 SWAP3 SWAP2 SWAP1 POP POP POP PUSH2 0x1CAC JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 DUP3 ISZERO ISZERO ISZERO ISZERO DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH1 0x6 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV DUP1 PUSH1 0x1F ADD PUSH1 0x20 DUP1 SWAP2 DIV MUL PUSH1 0x20 ADD PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 SWAP3 SWAP2 SWAP1 DUP2 DUP2 MSTORE PUSH1 0x20 ADD DUP3 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV DUP1 ISZERO PUSH2 0x965 JUMPI DUP1 PUSH1 0x1F LT PUSH2 0x93A JUMPI PUSH2 0x100 DUP1 DUP4 SLOAD DIV MUL DUP4 MSTORE SWAP2 PUSH1 0x20 ADD SWAP2 PUSH2 0x965 JUMP JUMPDEST DUP3 ADD SWAP2 SWAP1 PUSH1 0x0 MSTORE PUSH1 0x20 PUSH1 0x0 KECCAK256 SWAP1 JUMPDEST DUP2 SLOAD DUP2 MSTORE SWAP1 PUSH1 0x1 ADD SWAP1 PUSH1 0x20 ADD DUP1 DUP4 GT PUSH2 0x948 JUMPI DUP3 SWAP1 SUB PUSH1 0x1F AND DUP3 ADD SWAP2 JUMPDEST POP POP POP POP POP DUP2 JUMP JUMPDEST PUSH1 0x0 DUP2 PUSH1 0x5 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0x8C5BE1E5EBEC7D5BD14F71427D1E84F3DD0314C0F7B2291E5B200AC8C7C3B925 DUP5 PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG3 PUSH1 0x1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH2 0x120 PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 PUSH1 0x0 DUP2 MSTORE PUSH1 0x20 ADD DUP8 DUP2 MSTORE PUSH1 0x20 ADD DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD DUP4 DUP2 MSTORE PUSH1 0x20 ADD DUP5 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 DUP2 MSTORE PUSH1 0x20 ADD TIMESTAMP DUP2 MSTORE POP PUSH1 0xB PUSH1 0x0 PUSH1 0xA SLOAD DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 DUP3 ADD MLOAD DUP2 PUSH1 0x0 ADD SSTORE PUSH1 0x20 DUP3 ADD MLOAD DUP2 PUSH1 0x1 ADD SSTORE PUSH1 0x40 DUP3 ADD MLOAD DUP2 PUSH1 0x2 ADD PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP PUSH1 0x60 DUP3 ADD MLOAD DUP2 PUSH1 0x3 ADD PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP PUSH1 0x80 DUP3 ADD MLOAD DUP2 PUSH1 0x4 ADD SWAP1 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 PUSH2 0xBA4 SWAP3 SWAP2 SWAP1 PUSH2 0x20FC JUMP JUMPDEST POP PUSH1 0xA0 DUP3 ADD MLOAD DUP2 PUSH1 0x5 ADD SSTORE PUSH1 0xC0 DUP3 ADD MLOAD DUP2 PUSH1 0x6 ADD SSTORE PUSH1 0xE0 DUP3 ADD MLOAD DUP2 PUSH1 0x7 ADD SSTORE PUSH2 0x100 DUP3 ADD MLOAD DUP2 PUSH1 0x8 ADD SSTORE SWAP1 POP POP PUSH1 0x1 PUSH1 0xB PUSH1 0x0 PUSH1 0xA SLOAD DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x9 ADD PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP DUP3 DUP3 PUSH1 0x40 MLOAD DUP1 DUP3 DUP1 MLOAD SWAP1 PUSH1 0x20 ADD SWAP1 DUP1 DUP4 DUP4 JUMPDEST PUSH1 0x20 DUP4 LT ISZERO ISZERO PUSH2 0xC76 JUMPI DUP1 MLOAD DUP3 MSTORE PUSH1 0x20 DUP3 ADD SWAP2 POP PUSH1 0x20 DUP2 ADD SWAP1 POP PUSH1 0x20 DUP4 SUB SWAP3 POP PUSH2 0xC51 JUMP JUMPDEST PUSH1 0x1 DUP4 PUSH1 0x20 SUB PUSH2 0x100 EXP SUB DUP1 NOT DUP3 MLOAD AND DUP2 DUP5 MLOAD AND DUP1 DUP3 OR DUP6 MSTORE POP POP POP POP POP POP SWAP1 POP ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 KECCAK256 TIMESTAMP PUSH32 0x4739960E25045E532FCA353A79000EAD7E0B2F0707BC28B826630E1CFA2DE6C9 DUP9 PUSH1 0xA SLOAD PUSH1 0x40 MLOAD DUP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP3 POP POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG4 PUSH2 0xD27 PUSH1 0x1 PUSH1 0xA SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0xA DUP2 SWAP1 SSTORE POP PUSH1 0xA SLOAD SWAP1 POP SWAP6 SWAP5 POP POP POP POP POP JUMP JUMPDEST PUSH1 0x8 SLOAD DUP2 JUMP JUMPDEST PUSH1 0x0 DUP1 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO ISZERO PUSH2 0xD7E JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x3 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD DUP3 GT ISZERO ISZERO ISZERO PUSH2 0xDCC JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x5 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD DUP3 GT ISZERO ISZERO ISZERO PUSH2 0xE57 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND ISZERO ISZERO ISZERO PUSH2 0xEB0 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0x0 DUP5 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND ISZERO ISZERO ISZERO PUSH2 0xF09 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH2 0xF5B DUP3 PUSH1 0x3 PUSH1 0x0 DUP8 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20E3 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH2 0xFF0 DUP3 PUSH1 0x3 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH2 0x10C2 DUP3 PUSH1 0x5 PUSH1 0x0 DUP8 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20E3 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x5 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP5 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0xDDF252AD1BE2C89B69C2B068FC378DAA952BA7F163C4A11628F55A4DF523B3EF DUP5 PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG3 PUSH1 0x1 SWAP1 POP SWAP4 SWAP3 POP POP POP JUMP JUMPDEST PUSH1 0x0 DUP2 JUMP JUMPDEST PUSH1 0x12 DUP2 JUMP JUMPDEST PUSH1 0x0 PUSH1 0x12 PUSH1 0xFF AND PUSH1 0xA EXP DUP3 MUL SWAP2 POP PUSH2 0x128D DUP3 PUSH1 0x8 SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x8 DUP2 SWAP1 SSTORE POP PUSH2 0x12E5 DUP3 PUSH1 0x3 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0xF6798A560793A54C3BCFE86A93CDE1E73087D944C0EA20544137D4121396885 DUP4 PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG2 DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH1 0x0 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0xDDF252AD1BE2C89B69C2B068FC378DAA952BA7F163C4A11628F55A4DF523B3EF DUP5 PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG3 PUSH1 0x1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x1 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH2 0x149F DUP3 DUP3 PUSH2 0x15B0 JUMP JUMPDEST POP POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x3 PUSH1 0x0 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH1 0x0 DUP1 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 JUMP JUMPDEST PUSH1 0x7 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV DUP1 PUSH1 0x1F ADD PUSH1 0x20 DUP1 SWAP2 DIV MUL PUSH1 0x20 ADD PUSH1 0x40 MLOAD SWAP1 DUP2 ADD PUSH1 0x40 MSTORE DUP1 SWAP3 SWAP2 SWAP1 DUP2 DUP2 MSTORE PUSH1 0x20 ADD DUP3 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV DUP1 ISZERO PUSH2 0x15A8 JUMPI DUP1 PUSH1 0x1F LT PUSH2 0x157D JUMPI PUSH2 0x100 DUP1 DUP4 SLOAD DIV MUL DUP4 MSTORE SWAP2 PUSH1 0x20 ADD SWAP2 PUSH2 0x15A8 JUMP JUMPDEST DUP3 ADD SWAP2 SWAP1 PUSH1 0x0 MSTORE PUSH1 0x20 PUSH1 0x0 KECCAK256 SWAP1 JUMPDEST DUP2 SLOAD DUP2 MSTORE SWAP1 PUSH1 0x1 ADD SWAP1 PUSH1 0x20 ADD DUP1 DUP4 GT PUSH2 0x158B JUMPI DUP3 SWAP1 SUB PUSH1 0x1F AND DUP3 ADD SWAP2 JUMPDEST POP POP POP POP POP DUP2 JUMP JUMPDEST PUSH1 0x0 DUP1 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO ISZERO PUSH2 0x15ED JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD DUP3 GT ISZERO ISZERO ISZERO PUSH2 0x163B JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND ISZERO ISZERO ISZERO PUSH2 0x1694 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x2 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD TIMESTAMP GT ISZERO ISZERO PUSH2 0x16E1 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH8 0xDE0B6B3A7640000 DUP3 MUL SWAP2 POP PUSH2 0x1740 DUP3 PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20E3 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH2 0x17D5 DUP3 PUSH1 0x3 PUSH1 0x0 DUP7 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0x3 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 DUP2 SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH1 0x1 DUP1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP DUP3 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0xDDF252AD1BE2C89B69C2B068FC378DAA952BA7F163C4A11628F55A4DF523B3EF DUP5 PUSH1 0x40 MLOAD DUP1 DUP3 DUP2 MSTORE PUSH1 0x20 ADD SWAP2 POP POP PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG3 PUSH1 0x1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x1 PUSH1 0x20 MSTORE DUP1 PUSH1 0x0 MSTORE PUSH1 0x40 PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP2 POP SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND DUP2 JUMP JUMPDEST PUSH1 0x0 DUP1 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO PUSH2 0x19B2 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x0 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO ISZERO PUSH2 0x19EE JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST DUP2 PUSH1 0x1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH1 0x1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x2 PUSH1 0x20 MSTORE DUP1 PUSH1 0x0 MSTORE PUSH1 0x40 PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP2 POP SWAP1 POP SLOAD DUP2 JUMP JUMPDEST PUSH1 0x0 PUSH1 0x1 PUSH1 0x0 DUP6 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH2 0x1ACA DUP4 DUP4 DUP4 PUSH2 0xD41 JUMP JUMPDEST POP POP POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x5 PUSH1 0x0 DUP5 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 DUP1 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO PUSH2 0x1BB2 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x0 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND EQ ISZERO ISZERO ISZERO PUSH2 0x1BEE JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST DUP1 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH1 0x0 DUP1 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH32 0x8BE0079C531659141344CD1FD0A4F28419497F9722A3DAAFE3B4186F6B6457E0 PUSH1 0x40 MLOAD PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 LOG3 DUP1 PUSH1 0x0 DUP1 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF MUL NOT AND SWAP1 DUP4 PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND MUL OR SWAP1 SSTORE POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0x3C PUSH1 0x9 PUSH1 0x2 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND MUL PUSH1 0xFF AND PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x8 ADD SLOAD ADD TIMESTAMP LT ISZERO ISZERO PUSH2 0x1CE9 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x0 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 ADD SLOAD EQ ISZERO ISZERO PUSH2 0x1D0E JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0xB PUSH1 0x0 DUP5 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x9 ADD PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH1 0xFF AND ISZERO ISZERO PUSH2 0x1D7A JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST DUP2 ISZERO PUSH2 0x1F7F JUMPI PUSH2 0x1DE8 PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH1 0xB PUSH1 0x0 DUP7 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x6 ADD SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x6 ADD DUP2 SWAP1 SSTORE POP PUSH1 0x2 PUSH1 0x8 SLOAD DUP2 ISZERO ISZERO PUSH2 0x1E10 JUMPI INVALID JUMPDEST DIV PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x6 ADD SLOAD GT ISZERO ISZERO PUSH2 0x1E34 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x1 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x1 ADD SLOAD EQ ISZERO PUSH2 0x1EAF JUMPI PUSH2 0x1EA9 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x3 ADD PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH1 0xB PUSH1 0x0 DUP7 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x5 ADD SLOAD PUSH2 0x126A JUMP JUMPDEST POP PUSH2 0x1F5E JUMP JUMPDEST PUSH1 0x2 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x1 ADD SLOAD EQ ISZERO PUSH2 0x1F5D JUMPI PUSH2 0x1F5B PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x2 ADD PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH1 0xB PUSH1 0x0 DUP7 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x3 ADD PUSH1 0x0 SWAP1 SLOAD SWAP1 PUSH2 0x100 EXP SWAP1 DIV PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH1 0xB PUSH1 0x0 DUP8 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x5 ADD SLOAD PUSH2 0xD41 JUMP JUMPDEST POP JUMPDEST JUMPDEST PUSH1 0x1 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 ADD DUP2 SWAP1 SSTORE POP PUSH2 0x2051 JUMP JUMPDEST PUSH2 0x1FE7 PUSH1 0x3 PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 SLOAD PUSH1 0xB PUSH1 0x0 DUP7 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x7 ADD SLOAD PUSH2 0x20C7 SWAP1 SWAP2 SWAP1 PUSH4 0xFFFFFFFF AND JUMP JUMPDEST PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x7 ADD DUP2 SWAP1 SSTORE POP PUSH1 0x2 PUSH1 0x8 SLOAD DUP2 ISZERO ISZERO PUSH2 0x200F JUMPI INVALID JUMPDEST DIV PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x7 ADD SLOAD LT ISZERO ISZERO ISZERO PUSH2 0x2034 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x2 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 ADD DUP2 SWAP1 SSTORE POP JUMPDEST PUSH1 0x0 PUSH1 0xB PUSH1 0x0 DUP6 DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x9 ADD PUSH1 0x0 CALLER PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND PUSH20 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF AND DUP2 MSTORE PUSH1 0x20 ADD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x0 KECCAK256 PUSH1 0x0 PUSH2 0x100 EXP DUP2 SLOAD DUP2 PUSH1 0xFF MUL NOT AND SWAP1 DUP4 ISZERO ISZERO MUL OR SWAP1 SSTORE POP PUSH1 0x1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 DUP2 DUP4 ADD SWAP1 POP DUP3 DUP2 LT ISZERO ISZERO ISZERO PUSH2 0x20DA JUMPI INVALID JUMPDEST DUP1 SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH1 0x0 DUP3 DUP3 GT ISZERO ISZERO ISZERO PUSH2 0x20F1 JUMPI INVALID JUMPDEST DUP2 DUP4 SUB SWAP1 POP SWAP3 SWAP2 POP POP JUMP JUMPDEST DUP3 DUP1 SLOAD PUSH1 0x1 DUP2 PUSH1 0x1 AND ISZERO PUSH2 0x100 MUL SUB AND PUSH1 0x2 SWAP1 DIV SWAP1 PUSH1 0x0 MSTORE PUSH1 0x20 PUSH1 0x0 KECCAK256 SWAP1 PUSH1 0x1F ADD PUSH1 0x20 SWAP1 DIV DUP2 ADD SWAP3 DUP3 PUSH1 0x1F LT PUSH2 0x213D JUMPI DUP1 MLOAD PUSH1 0xFF NOT AND DUP4 DUP1 ADD OR DUP6 SSTORE PUSH2 0x216B JUMP JUMPDEST DUP3 DUP1 ADD PUSH1 0x1 ADD DUP6 SSTORE DUP3 ISZERO PUSH2 0x216B JUMPI SWAP2 DUP3 ADD JUMPDEST DUP3 DUP2 GT ISZERO PUSH2 0x216A JUMPI DUP3 MLOAD DUP3 SSTORE SWAP2 PUSH1 0x20 ADD SWAP2 SWAP1 PUSH1 0x1 ADD SWAP1 PUSH2 0x214F JUMP JUMPDEST JUMPDEST POP SWAP1 POP PUSH2 0x2178 SWAP2 SWAP1 PUSH2 0x217C JUMP JUMPDEST POP SWAP1 JUMP JUMPDEST PUSH2 0x219E SWAP2 SWAP1 JUMPDEST DUP1 DUP3 GT ISZERO PUSH2 0x219A JUMPI PUSH1 0x0 DUP2 PUSH1 0x0 SWAP1 SSTORE POP PUSH1 0x1 ADD PUSH2 0x2182 JUMP JUMPDEST POP SWAP1 JUMP JUMPDEST SWAP1 JUMP STOP LOG1 PUSH6 0x627A7A723058 KECCAK256 0x26 0xef 0xc4 EXTCODECOPY PUSH9 0xE7BF49575E0BEF8140 0xde 0xe7 SLOAD 0xe6 0x5d PUSH27 0xDE84FBF3F9EC834EF5765548002900000000000000000000000000 ",
+		"sourceMap": "4308:4192:0:-;;;4352:24;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;4387:26;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;4545:1;4516:30;;4609:2;4592:19;;;;;;;;;;;;;;;;;;;;6037:1;6011:27;;4624:443;8:9:-1;5:2;;;30:1;27;20:12;5:2;4624:443:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;272:10;264:5;;:18;;;;;;;;;;;;;;;;;;4758:5;4751:4;:12;;;;;;;;;;;;:::i;:::-;;4784:7;4775:6;:16;;;;;;;;;;;;:::i;:::-;;4457:2;4840:17;;4834:2;:23;4818:12;:40;4804:11;:54;;;;4879:8;4869:7;;:18;;;;;;;;;;;;;;;;;;4907:7;4898:6;;:16;;;;;;;;;;;;;;;;;;4936:9;4925:8;;:20;;;;;;;;;;;;;;;;;;4979:37;5004:11;;4979:8;:20;4988:10;4979:20;;;;;;;;;;;;;;;;:24;;;;;;:37;;;;;:::i;:::-;4956:8;:20;4965:10;4956:20;;;;;;;;;;;;;;;:60;;;;5055:4;5027:13;:25;5041:10;5027:25;;;;;;;;;;;;;;;;:32;;;;;;;;;;;;;;;;;;4624:443;;;;;;4308:4192;;1150:127;1208:9;1234:1;1230;:5;1226:9;;1254:1;1249;:6;;1242:14;;;;;;1270:1;1263:8;;1150:127;;;;:::o;4308:4192::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;"
+	}
+	var user_abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_types","type":"uint256"},{"name":"_myAddress","type":"address"},{"name":"_toAddress","type":"address"},{"name":"_numbers","type":"uint256"},{"name":"_content","type":"string"}],"name":"addVoteList","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"INITIAL_SUPPLY","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_amount","type":"uint256"}],"name":"mint","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"_transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"frozenAccount","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_target","type":"address"},{"name":"_freeze","type":"bool"}],"name":"freeze","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"frozenTimestamp","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"_transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"code","type":"uint256"},{"name":"_isVote","type":"bool"}],"name":"setVoteList","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_name","type":"string"},{"name":"_symbol","type":"string"},{"name":"_totalSupply","type":"uint256"},{"name":"_support","type":"uint8"},{"name":"_quorum","type":"uint8"},{"name":"_duration","type":"uint8"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"myAddress","type":"address"},{"indexed":true,"name":"createTime","type":"uint256"},{"indexed":true,"name":"content","type":"string"},{"indexed":true,"name":"numbers","type":"uint256"},{"indexed":false,"name":"codes","type":"uint256"}],"name":"createVote","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}]
+	var admin_abi = [{"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_code","type":"string"},{"name":"_site","type":"string"},{"name":"_capital","type":"uint256"},{"name":"_birDate","type":"string"},{"name":"_only","type":"string"},{"name":"_tokenAddress","type":"string"}],"name":"setCompanyList","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"tokenAddress","type":"string"},{"indexed":true,"name":"only","type":"string"},{"indexed":true,"name":"creater","type":"address"}],"name":"createCompany","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"constant":true,"inputs":[{"name":"_only","type":"string"}],"name":"getCompanyAddress","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_only","type":"string"}],"name":"getCompanyList","outputs":[{"name":"","type":"string"},{"name":"","type":"string"},{"name":"","type":"string"},{"name":"","type":"uint256"},{"name":"","type":"string"},{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}]
+		var admin_address = '0x40f4bd7e83d4ece62f68b894a65cc263666f6f6c'
+	if (typeof web3 !== 'undefined') {
+      	web3js = new Web3(web3.currentProvider);
+      	var userContract = new web3js.eth.Contract(user_abi);
+		var adminContract = new web3js.eth.Contract(admin_abi, admin_address);
+    } else {
+		alert('请登录metamask钱包')
+    }
     $(document).ready(function(){
+		web3js.eth.getCoinbase().then(result => {
+			myAddress = result;
+		});	
+		
+        $('#record').click(function(){
+        	adminContract.methods.setCompanyList(
+        		'<?=$info['name']?>',
+        		'<?=$info['code']?>',
+        		'<?=$phone_codes[$info['address']]['en']?>',
+        		'<?=$info['capital']?>',
+        		'<?=date('Y-m-d',$info['establish'])?>',
+        		'<?=$info['only']?>',
+        		'<?=$info['contract']?>'
+        	).send({
+				from: myAddress,
+			}).on('transactionHash',function( receipt){
+				var record = receipt;
+	            $.ajax({
+	                url :"record_ajax",
+	                type :"POST",
+	                data :{"record":record,"id":<?=$info['id']?>},
+	                dataType : "json",
+	                success:function(e){
+	                    alert(e.info);
+	                    if(e.state==0){
+	                        window.location.reload();
+	                    }
+	                } 
+	            });
+			})
+            
+        })
+
+        $('#contract').click(function(){
+        	userContract.deploy({
+				data:user_bytecode.object,
+				arguments: eval("(['<?=$info['token_name']?>','<?=$info['token_symbol']?>',<?=$info['token_number']?>,<?=$info['support']?>,<?=$info['quorum']?>,<?=$info['duration']?>])")
+			}).send({
+				from: myAddress,
+			}).then(newContractInstance =>{
+				console.log(newContractInstance.options.address) // 新地址的合约实例
+				var contract = newContractInstance.options.address;
+	            $.ajax({
+	                url :"contract_ajax",
+	                type :"POST",
+	                data :{"contract":contract,"id":<?=$info['id']?>},
+	                dataType : "json",
+	                success:function(e){
+	                    alert(e.info);
+	                    if(e.state==0){
+	                        window.location.reload();
+	                    }
+	                } 
+	            });
+			});
+        })
+
         $('#frist').click(function(){
             window.history.back(-1);
         })

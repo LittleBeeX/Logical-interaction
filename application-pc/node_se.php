@@ -72,7 +72,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -129,7 +129,7 @@ class node_se extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
                 exit(json_encode(array('state' => 4,'info' => "你不是当前组织成员，无权访问")));
