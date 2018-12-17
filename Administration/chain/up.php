@@ -171,6 +171,40 @@
                             </div>
                         </div>
                     </div>
+                    <div class="control-group">
+                        <label class="control-label">信息状态</label>
+                        <div class="controls">
+                            <select name="state" class="input-xlarge valid">
+                            <?foreach ($state as $k_state => $v_state) {?>
+                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
+                            <?}?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">合约地址</label>
+                        <div class="controls">
+                        <?if(!empty($info['contract'])){?>
+                            <input type="text" name="contract" value="<?=$info['contract']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+                        <?}else{?>
+                            请先到公司信息里生成合约地址！
+                        <?}?>
+                        </div>
+                    </div>
+                    
+                    <?if($info['state']==2 && !empty($info['contract'])){?>
+                        <div class="control-group">
+                            <label class="control-label">记录地址</label>
+                            <div class="controls">
+                            <?if(!empty($info['record'])){?>
+                                <input type="text" name="record" value="<?=$info['record']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
+                            <?}else{?>
+                                <input type="button" id="record" class="btn btn-primary" value="记录信息">
+                            <?}?>
+                            </div>
+                        </div>
+                    <?}?>
 
                 <?if($info['state']>0){?>
                     <div class="control-group">
@@ -210,6 +244,32 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+
+        $('#record').click(function(){
+            adminContract.methods.setCompanyList(
+
+
+
+            ).send({
+                from: myAddress,
+            }).on('transactionHash',function( receipt){
+                var record = receipt;
+                $.ajax({
+                    url :"record_ajax",
+                    type :"POST",
+                    data :{"record":record,"id":<?=$info['id']?>},
+                    dataType : "json",
+                    success:function(e){
+                        alert(e.info);
+                        if(e.state==0){
+                            window.location.reload();
+                        }
+                    } 
+                });
+            })
+            
+        })
+
         $('#frist').click(function(){
             window.history.back(-1);
         })

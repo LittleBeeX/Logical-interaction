@@ -253,10 +253,10 @@ class node_se extends actionAbstract {
                 }
             }
         }
-        $where = "meeting.company=".$companyinfo['id']." and meeting.state=".$state;
-        /*if(!empty($condition)){
-            $where = " and meeting.state=".$state;
-        }*/
+        $where = "meeting.company=".$companyinfo['id'];
+        if(!empty($condition)){
+            $where .= " and meeting.state=".$state;
+        }
         if(!empty($search)){
             $where .= " and meeting.content LIKE '%".$search."%'";
         }
@@ -286,6 +286,9 @@ class node_se extends actionAbstract {
                 }
                 $list[$key_t]['support'] = $companyinfo['support'];
                 $list[$key_t]['quorum'] = $companyinfo['quorum'];
+
+                $remnant = (($value_t['start_time']+$duration)-time())/3600;
+                $list[$key_t]['remnant'] = $remnant;
             }
         }
         exit(json_encode(array('state' => 0,'info' => $list)));
