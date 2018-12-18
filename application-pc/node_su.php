@@ -738,11 +738,17 @@ class node_su extends actionAbstract {
         }
 
         $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2",'id');
-        $sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
+        /*$sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
         $cntvote = $this->user->voteModel->fetchRow($sql);
         $yes_cnt = $cntvote['yes_cnt']/$cnt*100;
         $yes_cnt = substr(sprintf("%.5f",$yes_cnt),0,-1);
         $no_cnt = $cntvote['no_cnt']/$cnt*100;
+        $no_cnt = substr(sprintf("%.5f",$no_cnt),0,-1);*/
+
+        $cntvote = $this->user->voteModel->selectCnt("state!=0",'id');
+        $yes_cnt = $cntvote/$cnt*100;
+        $yes_cnt = substr(sprintf("%.5f",$yes_cnt),0,-1);
+        $no_cnt = $cntvote/$cnt*100;
         $no_cnt = substr(sprintf("%.5f",$no_cnt),0,-1);
 
         $sql = "SELECT coalesce(SUM(CASE WHEN state=1 THEN token_number ELSE 0 END),0) as yes_number,coalesce(SUM(CASE WHEN state=2 THEN token_number ELSE 0 END),0) as no_number FROM user_vote WHERE meeting=".$id;

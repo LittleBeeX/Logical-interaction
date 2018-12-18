@@ -273,6 +273,15 @@ class node_se extends actionAbstract {
         $list = $this->user->meetingModel->fetchAll($sql);
         if(!empty($list)){
             foreach ($list as $key_t => $value_t) {
+                $list[$key_t]['surname_t'] = "";
+                $list[$key_t]['name_t'] = "";
+                if(!empty($value_t['type'])){
+                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id']." and state=2";
+                    $info_t = $this->user->chainModel->fetchRow($sql);
+                    $list[$key_t]['surname_t'] = $info_t['surname'];
+                    $list[$key_t]['name_t'] = $info_t['name'];
+                }
+
                 if($value_t['state'] == 0){
                     $sql = "SELECT id FROM user_vote WHERE uid=".$this->uid." and meeting=".$value_t['id'];
                     $voteinfo = $this->user->voteModel->fetchRow($sql);
