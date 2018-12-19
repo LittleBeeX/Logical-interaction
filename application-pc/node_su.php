@@ -605,7 +605,7 @@ class node_su extends actionAbstract {
         $address = isset($_POST['address'])?$_POST['address']:"";
         $address = filterCharacter($address);
         $type = isset($_POST['type'])?(int)$_POST['type']:0;
-        if($type<0 || $type>1){
+        if($type<0 || $type>2){
         	$type = 0;
         }
         $content = isset($_POST['content'])?$_POST['content']:"";
@@ -766,11 +766,11 @@ class node_su extends actionAbstract {
                 $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
                 $targetinfo = $this->user->voteModel->fetchRow($sql);
 
-                $target = $targetinfo['token_number'] + $meetinginfo['number'];
+                $target = ($targetinfo['token_number'] + $meetinginfo['number']);
                 $this->user->chainModel->update(array('token_number'=>$target,'change_time'=>time()),"id=".$targetinfo['id']);
 
-                $sum = $companyinfo['token_number']+$meetinginfo['number'];
-                $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$id);
+                $sum = ($companyinfo['token_number']+$meetinginfo['number']);
+                $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
 
                 $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2";
                 $chain_list = $this->user->chainModel->fetchAll($sql);
@@ -791,10 +791,10 @@ class node_su extends actionAbstract {
                 $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
                 $targetinfo = $this->user->chainModel->fetchRow($sql);
 
-                $number_a = $launchinfo['token_number'] - $meetinginfo['number'];
+                $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
                 $proportion_a = $number_a/$companyinfo['token_number']*100;
                 $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
-                $number_b = $targetinfo['token_number'] + $meetinginfo['number'];
+                $number_b = ($targetinfo['token_number'] + $meetinginfo['number']);
                 $proportion_b = $number_b/$companyinfo['token_number']*100;
                 $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
 
