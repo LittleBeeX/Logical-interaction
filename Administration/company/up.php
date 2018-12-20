@@ -163,17 +163,7 @@
 	                            <input type="text" name="token_number" value="<?=$info['token_number']?>"  class="input-xlarge" data-rule-required="true" disabled="disabled"/>
 	                        </div>
 	                    </div>
-	                    <div class="control-group">
-	                        <label class="control-label">信息状态</label>
-	                        <div class="controls">
-	                            <select name="state" class="input-xlarge valid">
-	                            <?foreach ($state as $k_state => $v_state) {?>
-	                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
-	                            <?}?>
-	                            </select>
-	                        </div>
-	                    </div>
-	                <?if($info['state']==2){?>
+	                <?if($info['state']==1){?>
 	                    <div class="control-group">
 	                        <label class="control-label">合约地址</label>
 	                        <div class="controls">
@@ -186,7 +176,7 @@
 	                    </div>
 	                <?}?>
 	                
-	                <?if($info['state']==2 && !empty($info['contract'])){?>
+	                <?if($info['state']==1 && !empty($info['contract'])){?>
 	                    <div class="control-group">
 	                        <label class="control-label">记录地址</label>
 	                        <div class="controls">
@@ -198,6 +188,17 @@
 	                        </div>
 	                    </div>
 	                <?}?>
+
+	                    <div class="control-group">
+	                        <label class="control-label">信息状态</label>
+	                        <div class="controls">
+	                            <select name="state" class="input-xlarge valid">
+	                            <?foreach ($state as $k_state => $v_state) {?>
+	                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
+	                            <?}?>
+	                            </select>
+	                        </div>
+	                    </div>
 	
 	                <?if($info['state']>0){?>
 	                    <div class="control-group">
@@ -282,7 +283,7 @@
 	                                <td><?=date('Y-m-d',$v['create_time'])?></td>
 	                                <td>
 	                                    <a data-original-title="查看详情" rel="tooltip" class="btn btn-small btn-primary" href="<?=$this->url("chain/se")?>?id=<?=$v["id"]?>"><i class="icon-eye-open"></i></a>
-	                                <?if($v['state']!=0){?>
+	                                <?if($v['state']==1){?>
 	                                    <a data-original-title="处理" rel="tooltip" class="btn btn-small btn-success" href="<?=$this->url("chain/up")?>?id=<?=$v["id"]?>"><i class="icon-edit"></i></a>
 	                                <?}?>
 	                                </td>
@@ -333,20 +334,6 @@
 				from: myAddress,
 			}).on('transactionHash',function( receipt){
 				var record = receipt;
-	            $.ajax({
-	                url :"record_ajax",
-	                type :"POST",
-	                data :{"record":record,"id":<?=$info['id']?>},
-	                dataType : "json",
-	                success:function(e){
-	                    alert(e.info);
-	                    if(e.state==0){
-	                        window.location.reload();
-	                    }
-	                } 
-	            });
-			}).then(newContractInstance =>{
-	            var record = newContractInstance.options.address;
 	            $.ajax({
 	                url :"record_ajax",
 	                type :"POST",

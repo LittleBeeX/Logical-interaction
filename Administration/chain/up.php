@@ -171,16 +171,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label">信息状态</label>
-                        <div class="controls">
-                            <select name="state" class="input-xlarge valid">
-                            <?foreach ($state as $k_state => $v_state) {?>
-                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
-                            <?}?>
-                            </select>
-                        </div>
-                    </div>
 
                     <div class="control-group">
                         <label class="control-label">合约地址</label>
@@ -193,7 +183,7 @@
                         </div>
                     </div>
                     
-                    <?if($info['state']==2 && !empty($info['contract'])){?>
+                    <?if($info['state']==1 && !empty($info['contract'])){?>
                         <div class="control-group">
                             <label class="control-label">记录地址</label>
                             <div class="controls">
@@ -205,6 +195,17 @@
                             </div>
                         </div>
                     <?}?>
+                    
+                    <div class="control-group">
+                        <label class="control-label">信息状态</label>
+                        <div class="controls">
+                            <select name="state" class="input-xlarge valid">
+                            <?foreach ($state as $k_state => $v_state) {?>
+                                <option value="<?=$k_state?>" <?if($k_state == $info['state']){?>selected<?}?> ><?=$v_state?></option>
+                            <?}?>
+                            </select>
+                        </div>
+                    </div>
 
                 <?if($info['state']>0){?>
                     <div class="control-group">
@@ -261,9 +262,9 @@
 					toAddress
 				).send({
 	                from: myAddress,
-	            }).on('transactionHash',function( receipt){
-	                var record = receipt;
-	                $.ajax({
+	            }).then(newContractInstance =>{
+		           var record = newContractInstance.transactionHash;
+		            $.ajax({
 	                    url :"record_ajax",
 	                    type :"POST",
 	                    data :{"record":record,"id":<?=$info['id']?>},
@@ -275,7 +276,7 @@
 	                        }
 	                    } 
 	                });
-	            })
+				})
 			});	
         })
 
