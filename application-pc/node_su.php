@@ -64,7 +64,7 @@ class node_su extends actionAbstract {
         $sql = "SELECT * FROM user_company WHERE only='".$only."'";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
-            $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=0";
+            $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=0 and position!=0";
             $chaininfo = $this->user->chainModel->fetchRow($sql);
             if(empty($chaininfo)){
                 exit(json_encode(array('state' => 6,'info' => "请先提交个人认证信息")));
@@ -95,10 +95,10 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 0,'info' => '操作成功')));
         }else{
             if($companyinfo['uid'] == $this->uid){
-                $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=".$companyinfo['id'];
+                $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=".$companyinfo['id']." and position!=0";
                 $chaininfo = $this->user->chainModel->fetchRow($sql);
                 if(empty($chaininfo)){
-                    $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=0";
+                    $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=0 and position!=0";
                     $chaininfo2 = $this->user->chainModel->fetchRow($sql);
                     if(empty($chaininfo2)){
                         exit(json_encode(array('state' => 6,'info' => "请先提交个人认证信息")));
@@ -175,7 +175,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
@@ -237,7 +237,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
@@ -330,7 +330,7 @@ class node_su extends actionAbstract {
             $companyinfo = $this->user->companyModel->fetchRow($sql);
             $company = $companyinfo['id'];
         }
-        $sql = "SELECT * FROM user_chain WHERE uid=".$this->uid." and company=".$company." and address='".$address."'";
+        $sql = "SELECT * FROM user_chain WHERE uid=".$this->uid." and company=".$company." and address='".$address."' and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
 
         if(empty($chaininfo)){
@@ -426,7 +426,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id,portrait FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id,portrait FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
@@ -553,7 +553,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id'];
+        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id']." and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
@@ -627,7 +627,7 @@ class node_su extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
-        $sql = "SELECT id,token_number FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id,token_number FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
@@ -657,7 +657,10 @@ class node_su extends actionAbstract {
 	            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
 	        }
             if($type == 2){
-                if($number>$chaininfo['token_number']){
+            	$sql = "SELECT IFNULL(SUM(number),0) as number FROM user_meeting WHERE uid=".$this->uid." and type=2 and state=0";
+            	$meetinginfo = $this->user->meetingModel->fetchRow($sql);
+            	$token_number = $chaininfo['token_number']-$meetinginfo['number'];
+                if($number>$token_number){
                     exit(json_encode(array('state' => 9,'info' => "成员的Token数量不足")));
                 }
             }
@@ -708,7 +711,7 @@ class node_su extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 5,'info' => "无当前组织信息")));
         }
-        $sql = "SELECT id,token_number,token_proportion FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id,token_number,token_proportion,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
@@ -737,7 +740,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' =>9,'info' => "操作失败")));
         }
 
-        $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2",'id');
+        $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2 and position!=0",'id');
         /*$sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
         $cntvote = $this->user->voteModel->fetchRow($sql);
         $yes_cnt = $cntvote['yes_cnt']/$cnt*100;
@@ -763,11 +766,22 @@ class node_su extends actionAbstract {
         }else if($yes_sum > $companyinfo['support'] &&  $yes_cnt>$companyinfo['quorum']){
             $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
             if($meetinginfo['type'] == 1){
-                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
+                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
                 $targetinfo = $this->user->voteModel->fetchRow($sql);
 
                 $target = ($targetinfo['token_number'] + $meetinginfo['number']);
-                $this->user->chainModel->update(array('token_number'=>$target,'change_time'=>time()),"id=".$targetinfo['id']);
+
+                $target_uparr = array(
+                	'token_number' => $target,
+                	'change_time' => time(),
+                );
+                if($targetinfo['position'] == 1){
+                	$target_uparr['position'] = 3;
+                }else if($targetinfo['position'] == 4){
+                	$target_uparr['position'] = 5;
+                }
+
+                $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
 
                 $sum = ($companyinfo['token_number']+$meetinginfo['number']);
                 $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
@@ -786,9 +800,9 @@ class node_su extends actionAbstract {
                     }
                 }
             }else if($meetinginfo['type'] == 2){
-                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and uid='".$meetinginfo['uid']."' and state=2";
+                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and uid='".$meetinginfo['uid']."' and state=2 and position!=0";
                 $launchinfo = $this->user->chainModel->fetchRow($sql);
-                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
+                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
                 $targetinfo = $this->user->chainModel->fetchRow($sql);
 
                 $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
@@ -798,8 +812,33 @@ class node_su extends actionAbstract {
                 $proportion_b = $number_b/$companyinfo['token_number']*100;
                 $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
 
-                $this->user->chainModel->update(array('token_number'=>$number_a,'token_proportion'=>$proportion_a,'change_time'=>time()),"id=".$launchinfo['id']);
-                $this->user->chainModel->update(array('token_number'=>$number_b,'token_proportion'=>$proportion_b,'change_time'=>time()),"id=".$targetinfo['id']);
+
+                $launch_uparr = array(
+                	'token_number' => $number_a,
+                	'token_proportion' => $proportion_a,
+                	'change_time' => time()
+                );
+                if($number_a <= 0){
+                	if($launchinfo['position'] == 3){
+                		$launch_uparr['position'] = 1;
+                	}else if($launchinfo['position'] == 5){
+                		$target_uparr['position'] = 4;
+                	}
+                }
+
+                $target_uparr = array(
+                	'token_number' => $number_b,
+                	'token_proportion' => $proportion_b,
+                	'change_time' => time()
+                );
+                if($targetinfo['position'] == 1){
+                	$target_uparr['position'] = 3;
+                }else if($targetinfo['position'] == 4){
+                	$target_uparr['position'] = 5;
+                }
+
+                $this->user->chainModel->update($launch_uparr,"id=".$launchinfo['id']);
+                $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
             }
         }
         exit(json_encode(array('state' =>0,'info' => "操作成功")));

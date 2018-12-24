@@ -72,7 +72,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid." and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -129,7 +129,7 @@ class node_se extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and position!=0";
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
                 exit(json_encode(array('state' => 4,'info' => "你不是当前组织成员，无权访问")));
@@ -145,9 +145,9 @@ class node_se extends actionAbstract {
 	        }
 
 	        if($companyinfo['uid'] == $this->uid){
-	        	$creator = 'true';
+	        	$creator = true;
 	        }else{
-	        	$creator = 'false';
+	        	$creator = false;
 	        }
         	unset($companyinfo['id']);
         	unset($companyinfo['uid']);
@@ -169,7 +169,7 @@ class node_se extends actionAbstract {
         if (empty($address)) {
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
         }
-        $sql = "SELECT a.name,a.address,a.only,a.contract FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.uid=".$this->uid." and b.address='".$address."'";
+        $sql = "SELECT a.name,a.address,a.only,a.contract FROM user_company as a LEFT JOIN user_chain as b ON a.id=b.company WHERE a.state=2 and b.state=2 and b.position!=0 and b.uid=".$this->uid." and b.address='".$address."'";
         $list = $this->user->companyModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 2,'info' => "无公司组织信息")));
@@ -195,7 +195,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT surname,name,address,token_number,token_proportion FROM user_chain WHERE company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT surname,name,address,token_number,token_proportion FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
         $list = $this->user->chainModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 3,'info' => "无成员信息")));
@@ -235,7 +235,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2";
+        $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
@@ -253,6 +253,7 @@ class node_se extends actionAbstract {
                 }
             }
         }
+
         $where = "meeting.company=".$companyinfo['id'];
         if(!empty($condition)){
             $where .= " and meeting.state=".$state;
@@ -261,22 +262,32 @@ class node_se extends actionAbstract {
             $where .= " and meeting.content LIKE '%".$search."%'";
         }
         $where .= " GROUP BY meeting.id DESC";
-        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,meeting.keyname,chain.surname,chain.name,chain.address,
-				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END),0) yes_number,
-				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END),0) no_number,
-				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END),0) yes_proportion,
-				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END),0) no_proportion,
-                SUM(CASE WHEN vote.state=1 THEN 1 ELSE 0 END) as yes_cnt,
-                SUM(CASE WHEN vote.state=2 THEN 1 ELSE 0 END) as no_cnt 
-				FROM user_meeting meeting LEFT JOIN user_chain chain ON meeting.uid=chain.uid and meeting.company=chain.company LEFT JOIN user_vote vote ON meeting.id=vote.meeting 
+        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,meeting.keyname,chain.surname,chain.name,chain.address 
+                FROM user_meeting as meeting LEFT JOIN user_chain as chain ON meeting.uid=chain.uid and meeting.company=chain.company 
                 WHERE ".$where;
         $list = $this->user->meetingModel->fetchAll($sql);
         if(!empty($list)){
             foreach ($list as $key_t => $value_t) {
+                $sql = "SELECT 
+                        coalesce(SUM(CASE WHEN state = 1 THEN token_number ELSE 0 END),0) as yes_number,
+                        coalesce(SUM(CASE WHEN state = 2 THEN token_number ELSE 0 END),0) as no_number,
+                        coalesce(SUM(CASE WHEN state = 1 THEN token_proportion ELSE 0 END),0) as yes_proportion,
+                        coalesce(SUM(CASE WHEN state = 2 THEN token_proportion ELSE 0 END),0) as no_proportion,
+                        SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,
+                        SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt 
+                        FROM user_vote WHERE meeting=".$value_t['id'];
+                $vote = $this->user->voteModel->fetchRow($sql);
+                $list[$key_t]['yes_number'] = $vote['yes_number'];
+                $list[$key_t]['no_number'] = $vote['no_number'];
+                $list[$key_t]['yes_proportion'] = $vote['yes_proportion'];
+                $list[$key_t]['no_proportion'] = $vote['no_proportion'];
+                $list[$key_t]['yes_cnt'] = $vote['yes_cnt'];
+                $list[$key_t]['no_cnt'] = $vote['no_cnt'];
+
                 $list[$key_t]['surname_t'] = "";
                 $list[$key_t]['name_t'] = "";
                 if(!empty($value_t['type'])){
-                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id']." and state=2";
+                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id']." and state=2 and position!=0";
                     $info_t = $this->user->chainModel->fetchRow($sql);
                     $list[$key_t]['surname_t'] = $info_t['surname'];
                     $list[$key_t]['name_t'] = $info_t['name'];
@@ -299,7 +310,60 @@ class node_se extends actionAbstract {
                 $remnant = (($value_t['start_time']+$duration)-time())/3600;
                 $list[$key_t]['remnant'] = $remnant;
             }
+
         }
+
+
+
+
+
+        /*$where = "meeting.company=".$companyinfo['id'];
+        if(!empty($condition)){
+            $where .= " and meeting.state=".$state;
+        }
+        if(!empty($search)){
+            $where .= " and meeting.content LIKE '%".$search."%'";
+        }
+        $where .= " GROUP BY meeting.id DESC";
+        $sql = "SELECT meeting.id,meeting.type,meeting.content,meeting.target,meeting.number,meeting.start_time,meeting.end_time,meeting.state,meeting.keyname,chain.surname,chain.name,chain.address,
+				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_number ELSE 0 END),0) yes_number,
+				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_number ELSE 0 END),0) no_number,
+				coalesce(SUM(CASE WHEN vote.state = 1 THEN vote.token_proportion ELSE 0 END),0) yes_proportion,
+				coalesce(SUM(CASE WHEN vote.state = 2 THEN vote.token_proportion ELSE 0 END),0) no_proportion,
+                SUM(CASE WHEN vote.state=1 THEN 1 ELSE 0 END) as yes_cnt,
+                SUM(CASE WHEN vote.state=2 THEN 1 ELSE 0 END) as no_cnt 
+				FROM user_meeting meeting LEFT JOIN user_chain chain ON meeting.uid=chain.uid and meeting.company=chain.company LEFT JOIN user_vote vote ON meeting.id=vote.meeting 
+                WHERE ".$where;
+        $list = $this->user->meetingModel->fetchAll($sql);
+        if(!empty($list)){
+            foreach ($list as $key_t => $value_t) {
+                $list[$key_t]['surname_t'] = "";
+                $list[$key_t]['name_t'] = "";
+                if(!empty($value_t['type'])){
+                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id']." and state=2 and position!=0";
+                    $info_t = $this->user->chainModel->fetchRow($sql);
+                    $list[$key_t]['surname_t'] = $info_t['surname'];
+                    $list[$key_t]['name_t'] = $info_t['name'];
+                }
+
+                if($value_t['state'] == 0){
+                    $sql = "SELECT id FROM user_vote WHERE uid=".$this->uid." and meeting=".$value_t['id'];
+                    $voteinfo = $this->user->voteModel->fetchRow($sql);
+                    if(empty($voteinfo)){
+                        $list[$key_t]['throw'] = 0;
+                    }else{
+                        $list[$key_t]['throw'] = 1; 
+                    }
+                }else{
+                    $list[$key_t]['throw'] = 1;
+                }
+                $list[$key_t]['support'] = $companyinfo['support'];
+                $list[$key_t]['quorum'] = $companyinfo['quorum'];
+
+                $remnant = (($value_t['start_time']+$duration)-time())/3600;
+                $list[$key_t]['remnant'] = $remnant;
+            }
+        }*/
         exit(json_encode(array('state' => 0,'info' => $list)));
     }
 
@@ -327,16 +391,16 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id'];
+        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id']." and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
         }
 
         if($this->uid == $companyinfo['uid']){
-            $info = array('notes'=>'公司认证','money'=>10000);
+            $info = array('type'=>2,'notes'=>'公司认证','money'=>10000);
         }else{
-            $info = array('notes'=>'个人认证','money'=>1000);
+            $info = array('type'=>1,'notes'=>'个人认证','money'=>1000);
         }
         exit(json_encode(array('state' => 0,'info' => $info)));
 
