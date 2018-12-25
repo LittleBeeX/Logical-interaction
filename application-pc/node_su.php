@@ -474,7 +474,7 @@ class node_su extends actionAbstract {
         $token_name = isset($_POST['token_name'])?$_POST['token_name']:'';
         $token_name = filterCharacter($token_name);
         $token_symbol = isset($_POST['token_symbol'])?$_POST['token_symbol']:'';
-        $token_symbol = filterCharacter($token_symbol);
+        $token_symbol = strtoupper(filterCharacter($token_symbol));
         $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
 
         if(empty($only)){
@@ -804,41 +804,43 @@ class node_su extends actionAbstract {
                 $launchinfo = $this->user->chainModel->fetchRow($sql);
                 $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
                 $targetinfo = $this->user->chainModel->fetchRow($sql);
+                if($launchinfo['id']!=$targetinfo['id']){
+                    $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
+                    $proportion_a = $number_a/$companyinfo['token_number']*100;
+                    $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
+                    
+                    $number_b = ($targetinfo['token_number'] + $meetinginfo['number']);
+                    $proportion_b = $number_b/$companyinfo['token_number']*100;
+                    $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
 
-                $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
-                $proportion_a = $number_a/$companyinfo['token_number']*100;
-                $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
-                $number_b = ($targetinfo['token_number'] + $meetinginfo['number']);
-                $proportion_b = $number_b/$companyinfo['token_number']*100;
-                $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
 
+                    $launch_uparr = array(
+                    	'token_number' => $number_a,
+                    	'token_proportion' => $proportion_a,
+                    	'change_time' => time()
+                    );
+                    if($number_a <= 0){
+                    	if($launchinfo['position'] == 3){
+                    		$launch_uparr['position'] = 1;
+                    	}else if($launchinfo['position'] == 5){
+                    		$target_uparr['position'] = 4;
+                    	}
+                    }
 
-                $launch_uparr = array(
-                	'token_number' => $number_a,
-                	'token_proportion' => $proportion_a,
-                	'change_time' => time()
-                );
-                if($number_a <= 0){
-                	if($launchinfo['position'] == 3){
-                		$launch_uparr['position'] = 1;
-                	}else if($launchinfo['position'] == 5){
-                		$target_uparr['position'] = 4;
-                	}
+                    $target_uparr = array(
+                    	'token_number' => $number_b,
+                    	'token_proportion' => $proportion_b,
+                    	'change_time' => time()
+                    );
+                    if($targetinfo['position'] == 1){
+                    	$target_uparr['position'] = 3;
+                    }else if($targetinfo['position'] == 4){
+                    	$target_uparr['position'] = 5;
+                    }
+
+                    $this->user->chainModel->update($launch_uparr,"id=".$launchinfo['id']);
+                    $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
                 }
-
-                $target_uparr = array(
-                	'token_number' => $number_b,
-                	'token_proportion' => $proportion_b,
-                	'change_time' => time()
-                );
-                if($targetinfo['position'] == 1){
-                	$target_uparr['position'] = 3;
-                }else if($targetinfo['position'] == 4){
-                	$target_uparr['position'] = 5;
-                }
-
-                $this->user->chainModel->update($launch_uparr,"id=".$launchinfo['id']);
-                $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
             }
         }
         exit(json_encode(array('state' =>0,'info' => "操作成功")));
