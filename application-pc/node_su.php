@@ -305,7 +305,7 @@ class node_su extends actionAbstract {
         if(empty($birthtime)){
             $birthtime = 0;
         }
-        if($position<0 || $position>4){
+        if($position<0 || $position>5){
             $position = 0;
         }
 
@@ -330,7 +330,7 @@ class node_su extends actionAbstract {
             $companyinfo = $this->user->companyModel->fetchRow($sql);
             $company = $companyinfo['id'];
         }
-        $sql = "SELECT * FROM user_chain WHERE uid=".$this->uid." and company=".$company." and address='".$address."' and position!=0";
+        $sql = "SELECT * FROM user_chain WHERE uid=".$this->uid." and company=".$company;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
 
         if(empty($chaininfo)){
@@ -350,13 +350,6 @@ class node_su extends actionAbstract {
             );
             $re=$this->user->chainModel->insert($inarr);
         }else{
-            if($chaininfo['state'] == 1){
-                exit(json_encode(array('state' => 3,'info' => '信息正是审核中，不能进行修改操作')));
-            }
-            if($chaininfo['state'] == 2){
-                exit(json_encode(array('state' => 4,'info' => '信息以审核通过，如有修改请联系客服')));
-            }
-
             $uparr = array('change_time' => time());
             if(!empty($company) && $company != $chaininfo['company']){
                 $uparr['company'] = $company;
@@ -388,8 +381,16 @@ class node_su extends actionAbstract {
             if(!empty($position) && $position != $chaininfo['position']){
                 $uparr['position'] = $position;
             }
-            if($chaininfo['state'] == 3){
-                $uparr['state'] = 1;
+            if(empty($chaininfo['position'])){
+                $uparr['state'] = 0;
+            }else{
+                if($chaininfo['state'] == 1){
+                    exit(json_encode(array('state' => 3,'info' => '信息正是审核中，不能进行修改操作')));
+                }else if($chaininfo['state'] == 2){
+                    exit(json_encode(array('state' => 4,'info' => '信息以审核通过，如有修改请联系客服')));
+                }else if($chaininfo['state'] == 3){
+                    $uparr['state'] = 1;
+                }
             }
             $re=$this->user->chainModel->update($uparr,"id=".$chaininfo['id']);
         }
@@ -553,7 +554,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and company=".$companyinfo['id']." and position!=0";
+        $sql = "SELECT id,uid,state FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
@@ -651,13 +652,13 @@ class node_su extends actionAbstract {
         	if(empty($number)){
 	            exit(json_encode(array('state' => 6,'info' => "请输入正确的数量")));
 	        }
-	        $sql = "SELECT id FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2";
+	        $sql = "SELECT id FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2 and position!=0";
 	        $targetinfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($targetinfo)){
 	            exit(json_encode(array('state' => 7,'info' => "组织内无当前目标成员信息")));
 	        }
             if($type == 2){
-            	$sql = "SELECT IFNULL(SUM(number),0) as number FROM user_meeting WHERE uid=".$this->uid." and type=2 and state=0";
+            	$sql = "SELECT IFNULL(SUM(number),0) as number FROM user_meeting WHERE uid=".$this->uid." and company=".$companyinfo['id']." and type=2 and state=0";
             	$meetinginfo = $this->user->meetingModel->fetchRow($sql);
             	$token_number = $chaininfo['token_number']-$meetinginfo['number'];
                 if($number>$token_number){
@@ -748,7 +749,7 @@ class node_su extends actionAbstract {
         $no_cnt = $cntvote['no_cnt']/$cnt*100;
         $no_cnt = substr(sprintf("%.5f",$no_cnt),0,-1);*/
 
-        $cntvote = $this->user->voteModel->selectCnt("state!=0",'id');
+        $cntvote = $this->user->voteModel->selectCnt("meeting=".$id." and state!=0",'id');
         $yes_cnt = $cntvote/$cnt*100;
         $yes_cnt = substr(sprintf("%.5f",$yes_cnt),0,-1);
         $no_cnt = $cntvote/$cnt*100;
@@ -766,7 +767,7 @@ class node_su extends actionAbstract {
         }else if($yes_sum > $companyinfo['support'] &&  $yes_cnt>$companyinfo['quorum']){
             $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
             if($meetinginfo['type'] == 1){
-                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2";
+                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
                 $targetinfo = $this->user->voteModel->fetchRow($sql);
 
                 $target = ($targetinfo['token_number'] + $meetinginfo['number']);
@@ -786,7 +787,7 @@ class node_su extends actionAbstract {
                 $sum = ($companyinfo['token_number']+$meetinginfo['number']);
                 $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
 
-                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2";
+                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
                 $chain_list = $this->user->chainModel->fetchAll($sql);
                 if(!empty($chain_list)){
                     foreach ($chain_list as $key => $value) {
@@ -820,7 +821,9 @@ class node_su extends actionAbstract {
                     	'change_time' => time()
                     );
                     if($number_a <= 0){
-                    	if($launchinfo['position'] == 3){
+                        if($launchinfo['position'] == 2){
+                            $launch_uparr['position'] = 0;
+                    	}else if($launchinfo['position'] == 3){
                     		$launch_uparr['position'] = 1;
                     	}else if($launchinfo['position'] == 5){
                     		$target_uparr['position'] = 4;

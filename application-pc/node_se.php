@@ -72,7 +72,7 @@ class node_se extends actionAbstract {
             $companyid = $companyinfo['id'];
         }
 
-        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid." and position!=0";
+        $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             $info = array(
@@ -90,6 +90,8 @@ class node_se extends actionAbstract {
                 'token_number' => 0,
                 'token_proportion' => 0,
                 'remarks' => '',
+                'passports' => '',
+                'position' => 0,
                 'country_cn' => '未选择',
                 'country_en' => 'Unselected',
             );
@@ -129,7 +131,7 @@ class node_se extends actionAbstract {
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }else{
-        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id']." and position!=0";
+        	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
 	        if(empty($chaininfo)){
                 exit(json_encode(array('state' => 4,'info' => "你不是当前组织成员，无权访问")));
@@ -195,7 +197,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT surname,name,address,token_number,token_proportion FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
+        $sql = "SELECT surname,name,address,token_number,token_proportion,position FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
         $list = $this->user->chainModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 3,'info' => "无成员信息")));
@@ -287,7 +289,7 @@ class node_se extends actionAbstract {
                 $list[$key_t]['surname_t'] = "";
                 $list[$key_t]['name_t'] = "";
                 if(!empty($value_t['type'])){
-                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id']." and state=2 and position!=0";
+                    $sql = "SELECT surname,name FROM user_chain WHERE address='".$value_t['target']."' and company=".$companyinfo['id'];
                     $info_t = $this->user->chainModel->fetchRow($sql);
                     $list[$key_t]['surname_t'] = $info_t['surname'];
                     $list[$key_t]['name_t'] = $info_t['name'];
@@ -403,6 +405,35 @@ class node_se extends actionAbstract {
             $info = array('type'=>1,'notes'=>'个人认证','money'=>1000);
         }
         exit(json_encode(array('state' => 0,'info' => $info)));
+
+    }
+
+
+    //查询当前是否有增发转让会议未结束
+    public function meeting_type(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','meeting');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $cntvote = $this->user->meetingModel->selectCnt("type!=0 and company=".$companyinfo['id']." and state=0",'id');
+        if(empty($cntvote)){
+            exit(json_encode(array('state' => 0,'info' => "当前无增发转让会议")));
+        }else{
+            exit(json_encode(array('state' => 3,'info' => "当前有增发转让会议")));
+        }
 
     }
 
