@@ -197,7 +197,7 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT surname,name,address,token_number,token_proportion,position FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
+        $sql = "SELECT surname,name,address,token_number,token_proportion,position FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0 ORDER BY token_number DESC";
         $list = $this->user->chainModel->fetchAll($sql);
         if(empty($list)){
             exit(json_encode(array('state' => 3,'info' => "无成员信息")));
@@ -275,8 +275,8 @@ class node_se extends actionAbstract {
                         coalesce(SUM(CASE WHEN state = 2 THEN token_number ELSE 0 END),0) as no_number,
                         coalesce(SUM(CASE WHEN state = 1 THEN token_proportion ELSE 0 END),0) as yes_proportion,
                         coalesce(SUM(CASE WHEN state = 2 THEN token_proportion ELSE 0 END),0) as no_proportion,
-                        SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,
-                        SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt 
+                        coalesce(SUM(CASE WHEN state=1 THEN 1 ELSE 0 END),0) as yes_cnt,
+                        coalesce(SUM(CASE WHEN state=2 THEN 1 ELSE 0 END),0) as no_cnt 
                         FROM user_vote WHERE meeting=".$value_t['id'];
                 $vote = $this->user->voteModel->fetchRow($sql);
                 $list[$key_t]['yes_number'] = $vote['yes_number'];
@@ -312,8 +312,8 @@ class node_se extends actionAbstract {
                 $remnant = (($value_t['start_time']+$duration)-time())/3600;
                 $list[$key_t]['remnant'] = $remnant;
             }
-
         }
+        $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2 and position!=0",'id');
 
 
 
@@ -366,7 +366,7 @@ class node_se extends actionAbstract {
                 $list[$key_t]['remnant'] = $remnant;
             }
         }*/
-        exit(json_encode(array('state' => 0,'info' => $list)));
+        exit(json_encode(array('state' => 0,'info' => $list,'cnt' => $cnt)));
     }
 
     //获取订单金额
