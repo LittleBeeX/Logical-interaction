@@ -610,7 +610,7 @@ class node_su extends actionAbstract {
         	$type = 0;
         }
         $content = isset($_POST['content'])?$_POST['content']:"";
-        $content = filterCharacter($content);
+        //$content = filterCharacter($content);
         $target = isset($_POST['target'])?$_POST['target']:"";
         $target = filterCharacter($target);
         $number = isset($_POST['number'])?(int)$_POST['number']:0;
