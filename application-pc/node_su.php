@@ -858,5 +858,192 @@ class node_su extends actionAbstract {
         return $re;
     }
 
+
+    //创建期权激励计划
+    public function option(){
+        $this->loadModel('user','option');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadModel('user','meeting');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        $option_time = isset($_POST['option_time'])?$_POST['option_time']:'1970-01-01 08:00:00';
+        $name = isset($_POST['name'])?$_POST['name']:'';
+        $name = filterCharacter($name);
+        $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
+        $grant_shares = isset($_POST['grant_shares'])?$_POST['grant_shares']:0;
+        $grant_type = isset($_POST['grant_type'])?(int)$_POST['grant_type']:0;
+        $total_month = isset($_POST['total_month'])?(int)$_POST['total_month']:0;
+        $content = isset($_POST['content'])?$_POST['content']:'';
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+        if($chaininfo['position']!=1 || $chaininfo['position']!=3){
+            exit(json_encode(array('state' => 5,'info' => "权限不够")));
+        }
+
+        if(empty($name)){
+            exit(json_encode(array('state' => 6,'info' => "期权激励计划名称不能为空")));
+        }
+
+        if(empty($token_number)){
+            exit(json_encode(array('state' => 7,'info' => "TOKEN不能为0")));
+        }
+
+        if(empty($grant_shares)){
+            exit(json_encode(array('state' => 8,'info' => "第一个到期日被授予的股份不能为空")));
+        }
+
+        if(empty($grant_type)){
+            exit(json_encode(array('state' => 9,'info' => "授予时间类型不能为空")));
+        }
+
+        if(empty($total_month)){
+            exit(json_encode(array('state' => 10,'info' => "总计月数不能为空")));
+        }
+
+        if(empty($content)){
+            exit(json_encode(array('state' => 11,'info' => "内容不能为空")));
+        }
+
+        $inarr = array(
+            'uid' => $this->uid,
+            'company' => $companyinfo['id'],
+            'option_time' => $option_time,
+            'name' => $name,
+            'token_number' => $token_number,
+            'grant_shares' => $grant_shares,
+            'grant_type' => $grant_type,
+            'total_month' => $total_month,
+            'state' => 1,
+            'create_time' => time(),
+        );
+
+        $re=$this->user->optionModel->insert($inarr);
+        if(empty($re)){
+            exit(json_encode(array('state' =>12,'info' => "操作失败")));
+        }
+
+        $inarr_meeting = array(
+            'uid' => $this->uid,
+            'type' => 0,
+            'company' => $companyinfo['id'],
+            'content' => $content,
+            'start_time' => time(),
+            'keyname' => $keyname,
+            'option_id' => $re,
+            'level' => 2,
+        );
+
+        $this->user->meetingModel->insert($inarr_meeting);
+        exit(json_encode(array('state' =>0,'info' => "操作成功")));
+    }
+
+    //期权计划添加名单
+    public function excitation(){
+        $this->loadModel('user','option');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        $target = isset($_POST['target'])?$_POST['target']:'';
+        $target = filterCharacter($target);
+        $option_id = isset($_POST['option'])?(int)$_POST['option']:0;
+        $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
+        $exercise_money = isset($_POST['exercise_money'])?$_POST['exercise_money']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+        if($chaininfo['position']!=1 || $chaininfo['position']!=3){
+            exit(json_encode(array('state' => 5,'info' => "权限不够")));
+        }
+
+        $sql = "SELECT id,portrait,position FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $targetinfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($targetinfo)){
+            exit(json_encode(array('state' => 6,'info' => "该组织无当前目标成员信息")));
+        }
+
+        $sql = "SELECT name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE id=".$option_id." and state=4";
+        $optioninfo = $this->user->optionModel->fetchRow($sql);
+        if(empty($option_id)){
+            exit(json_encode(array('state' => 7,'info' => "期权激励计划表ID不能为空")));
+        }
+
+        if(empty($token_number)){
+            exit(json_encode(array('state' => 8,'info' => "TOKEN数不能为空")));
+        }
+
+        $sql = "SELECT coalesce(SUM(token_number),0) as token_number FROM user_excitation WHERE option_id=".$option_id." and state>0 and state<3";
+        $option_sum = $this->user->excitationModel->fetchRow($sql);
+        $sum = $option_sum['token_number']+$token_number;
+        if($sum > $optioninfo['token_number']){
+            exit(json_encode(array('state' => 9,'info' => "期权计划里的TOKEN数不足")));
+        }
+
+        if(empty($exercise_money)){
+            exit(json_encode(array('state' => 10,'info' => "行使价格不能为0")));
+        }
+
+        $inarr = array(
+            'uid' => $this->uid,
+            'target' => $target,
+            'option_id' => $option_id,
+            'token_number' => $token_number,
+            'exercise_money' => $exercise_money,
+            'state' => 1,
+            'create_time' => time()
+        );
+
+        $re=$this->user->excitationModel->insert($inarr);
+        if(empty($re)){
+            exit(json_encode(array('state' =>12,'info' => "操作失败")));
+        }
+        exit(json_encode(array('state' =>0,'info' => "操作成功")));
+    }
+
+
+
+
 }
 ?>

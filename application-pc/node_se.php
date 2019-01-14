@@ -434,7 +434,30 @@ class node_se extends actionAbstract {
         }else{
             exit(json_encode(array('state' => 3,'info' => "当前有增发转让会议")));
         }
+    }
 
+
+    //获取期权计划列表
+    public function option(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','option');
+        $this->loadHelper("common");
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT option_time,name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE state=4";
+        $list = $this->user->optionModel->fetchAll($sql);
+        exit(json_encode(array('state' => 0,'info' => $list)));
     }
 
 }
