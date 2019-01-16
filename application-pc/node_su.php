@@ -871,7 +871,7 @@ class node_su extends actionAbstract {
         $only = filterCharacter($only);
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
-        $option_time = isset($_POST['option_time'])?$_POST['option_time']:'1970-01-01 08:00:00';
+        $option_time = isset($_POST['option_time'])?$_POST['option_time']:'2019-01-01';
         $name = isset($_POST['name'])?$_POST['name']:'';
         $name = filterCharacter($name);
         $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
@@ -898,7 +898,7 @@ class node_su extends actionAbstract {
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
         }
-        if($chaininfo['position']!=1 || $chaininfo['position']!=3){
+        if($chaininfo['position']!=1 && $chaininfo['position']!=3){
             exit(json_encode(array('state' => 5,'info' => "权限不够")));
         }
 
@@ -994,7 +994,7 @@ class node_su extends actionAbstract {
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
         }
-        if($chaininfo['position']!=1 || $chaininfo['position']!=3){
+        if($chaininfo['position']!=1 && $chaininfo['position']!=3){
             exit(json_encode(array('state' => 5,'info' => "权限不够")));
         }
 
@@ -1004,14 +1004,20 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 6,'info' => "该组织无当前目标成员信息")));
         }
 
-        $sql = "SELECT name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE id=".$option_id." and state=4";
+        $sql = "SELECT name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE id=".$option_id." and company=".$companyinfo['id']." and state=4";
         $optioninfo = $this->user->optionModel->fetchRow($sql);
         if(empty($option_id)){
-            exit(json_encode(array('state' => 7,'info' => "期权激励计划表ID不能为空")));
+            exit(json_encode(array('state' => 7,'info' => "无当前期权激励计划")));
         }
 
         if(empty($token_number)){
             exit(json_encode(array('state' => 8,'info' => "TOKEN数不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_excitation WHERE tid=".$targetinfo['id']."  and state>0 and state<3";
+        $excitationinfo = $this->user->excitationModel->fetchRow($sql);
+        if(!empty($excitationinfo)){
+            exit(json_encode(array('state' => 9,'info' => "目标成员已添加过")));
         }
 
         $sql = "SELECT coalesce(SUM(token_number),0) as token_number FROM user_excitation WHERE option_id=".$option_id." and state>0 and state<3";
@@ -1027,7 +1033,7 @@ class node_su extends actionAbstract {
 
         $inarr = array(
             'uid' => $this->uid,
-            'target' => $target,
+            'tid' => $targetinfo['id'],
             'option_id' => $option_id,
             'token_number' => $token_number,
             'exercise_money' => $exercise_money,
@@ -1037,7 +1043,7 @@ class node_su extends actionAbstract {
 
         $re=$this->user->excitationModel->insert($inarr);
         if(empty($re)){
-            exit(json_encode(array('state' =>12,'info' => "操作失败")));
+            exit(json_encode(array('state' =>11,'info' => "操作失败")));
         }
         exit(json_encode(array('state' =>0,'info' => "操作成功")));
     }

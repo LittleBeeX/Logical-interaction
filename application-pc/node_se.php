@@ -455,10 +455,139 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT option_time,name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE state=4";
+        $sql = "SELECT id,option_time,name,token_number,grant_shares,grant_type,total_month FROM user_option WHERE state=4";
         $list = $this->user->optionModel->fetchAll($sql);
         exit(json_encode(array('state' => 0,'info' => $list)));
     }
+
+    //获取期权计划名单
+    public function excitation(){
+        $this->loadModel('user','excitation');
+        $this->loadModel('user','plan');
+        $this->loadModel('user','company');
+        $this->loadModel('user','option');
+        $this->loadHelper("common");
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $option_id = isset($_POST['option'])?(int)$_POST['option']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id FROM user_option WHERE id=".$option_id." and company=".$companyinfo['id']." and state=4";
+        $optioninfo = $this->user->optionModel->fetchRow($sql);
+        if(empty($optioninfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前期权激励计划")));
+        }
+
+        $sql = "SELECT chain.surname,chain.name,excitation.token_number,excitation.id,excitation.exercise_money FROM user_excitation as excitation LEFT JOIN user_chain as chain ON excitation.tid=chain.id WHERE excitation.option_id =".$option_id." and excitation.state=2";
+        $list = $this->user->excitationModel->fetchAll($sql);
+        if(!empty($list)){
+            foreach ($list as $key => $value) {
+                $sql = "SELECT 
+                        coalesce(SUM(CASE WHEN state=1 THEN token_number ELSE 0 END),0) as state_a,
+                        coalesce(SUM(CASE WHEN state=2 THEN token_number ELSE 0 END),0) as state_b,
+                        coalesce(SUM(CASE WHEN state=0 or state=3 THEN token_number ELSE 0 END),0) as state_c,
+                        coalesce(MAX(expire_time),0) as expire_time 
+                        FROM user_plan WHERE excitation_id =".$value['id'];
+                $vote = $this->user->planModel->fetchRow($sql);
+                $list[$key]['state_a'] = $vote['state_a'];
+                $list[$key]['state_b'] = $vote['state_b'];
+                $list[$key]['state_c'] = $vote['state_c'];
+                $list[$key]['expire_time'] = $vote['expire_time'];
+            }
+        }
+        exit(json_encode(array('state' => 0,'info' => $list)));
+    }
+
+    //获取可加入期权计划名单
+    public function excitation_y(){
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadModel('user','option');
+        $this->loadHelper("common");
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $option_id = isset($_POST['option'])?(int)$_POST['option']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id FROM user_option WHERE id=".$option_id." and company=".$companyinfo['id']." and state=4";
+        $optioninfo = $this->user->optionModel->fetchRow($sql);
+        if(empty($optioninfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前期权激励计划")));
+        }
+
+        $sql = "SELECT surname,name,address FROM user_chain WHERE id NOT IN(SELECT tid FROM user_excitation WHERE state>0 and state<3)";
+        $list = $this->user->chainModel->fetchAll($sql);
+        exit(json_encode(array('state' => 0,'info' => $list)));
+    }
+
+    //获取期权执行计划列表
+    public function plan(){
+        $this->loadModel('user','company');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','option');
+        $this->loadModel('user','excitation');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:"";
+        $address = filterCharacter($address);
+        $option_id = isset($_POST['option'])?(int)$_POST['option']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_company WHERE only='".$only."'";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,uid,state FROM user_chain WHERE address='".$address."'' and company=".$companyinfo['id']." and position!=0";    
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织信息无当前用户信息")));
+        }
+
+        $sql = "SELECT id FROM user_option WHERE id=".$option_id." and company=".$companyinfo['id']." and state=4";
+        $optioninfo = $this->user->optionModel->fetchRow($sql);
+        if(empty($optioninfo)){
+            exit(json_encode(array('state' => 5,'info' => "无当前期权激励计划")));
+        }
+
+        $sql = "SELECT id FROM user_excitation WHERE option_id =".$option_id." and tid =".$chaininfo['id'];
+        $excitationinfo = $this->user->excitationModel->fetchRow($sql);
+        if(empty($excitationinfo)){
+            exit(json_encode(array('state' => 6,'info' => "期权激励计划中无当前人员")));
+        }
+
+        $sql = "SELECT id,expire_time,cycle,token_number,current_money,exercise_money,state FROM user_plan WHERE excitation_id  =".$excitationinfo['id'];
+        $list = $this->user->planModel->fetchAll($sql);
+        exit(json_encode(array('state' => 0,'info' => $list)));
+    }
+
 
 }
 ?>
