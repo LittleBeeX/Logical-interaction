@@ -682,6 +682,8 @@ class node_su extends actionAbstract {
         $this->loadModel('user','meeting');
         $this->loadModel('user','chain');
         $this->loadModel('user','company');
+        $this->loadModel('user','option');
+        $this->loadModel('user','excitation');
         $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:"";
@@ -690,6 +692,7 @@ class node_su extends actionAbstract {
         $address = filterCharacter($address);
         $id = isset($_POST['id'])?(int)$_POST['id']:0;
         $state = isset($_POST['state'])?(int)$_POST['state']:0;
+        $keyname = isset($_POST['keyname'])?(int)$_POST['keyname']:0;
         if($state<0 || $state>2){
             $state = 0;
         }
@@ -717,7 +720,7 @@ class node_su extends actionAbstract {
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 6,'info' => "该组织信息无当前用户信息")));
         }
-        $sql = "SELECT id,uid,type,target,number FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
+        $sql = "SELECT * FROM user_meeting WHERE id=".$id." and company=".$companyinfo['id']." and state=0";
         $meetinginfo = $this->user->meetingModel->fetchRow($sql);
         if(empty($meetinginfo)){
             exit(json_encode(array('state' => 7,'info' => "组织内无当前会议或已结束")));
@@ -741,7 +744,12 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' =>9,'info' => "操作失败")));
         }
 
-        $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2 and position!=0",'id');
+        if($meetinginfo['level'] == 1){
+            $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2 and (position=2 or position=5",'id');
+
+        }else if($meetinginfo['level'] == 2){
+            $cnt = $this->user->chainModel->selectCnt("company=".$companyinfo['id']." and state=2 and (position=1 or position=3",'id');
+        }
         /*$sql = "SELECT SUM(CASE WHEN state=1 THEN 1 ELSE 0 END) as yes_cnt,SUM(CASE WHEN state=2 THEN 1 ELSE 0 END) as no_cnt FROM user_vote WHERE meeting=".$id;
         $cntvote = $this->user->voteModel->fetchRow($sql);
         $yes_cnt = $cntvote['yes_cnt']/$cnt*100;
@@ -762,78 +770,29 @@ class node_su extends actionAbstract {
         $no_sum = $sumvote['no_number']/$companyinfo['token_number']*100;
         $no_sum = substr(sprintf("%.5f",$no_sum),0,-1);
 
-        if($no_sum >= $companyinfo['support'] && $no_cnt>=$companyinfo['quorum']){
-            $this->user->meetingModel->update(array('end_time'=>time(),'state'=>2),"id=".$id);
-        }else if($yes_sum > $companyinfo['support'] &&  $yes_cnt>$companyinfo['quorum']){
-            $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
-            if($meetinginfo['type'] == 1){
-                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
-                $targetinfo = $this->user->voteModel->fetchRow($sql);
 
-                $target = ($targetinfo['token_number'] + $meetinginfo['number']);
+        if($meetinginfo['level'] == 1){//股东会投票
 
-                $target_uparr = array(
-                	'token_number' => $target,
-                	'change_time' => time(),
-                );
-                if($targetinfo['position'] == 1){
-                	$target_uparr['position'] = 3;
-                }else if($targetinfo['position'] == 4){
-                	$target_uparr['position'] = 5;
+            if($no_sum >= $companyinfo['support'] && $no_cnt>=$companyinfo['quorum']){
+                $this->user->meetingModel->update(array('end_time'=>time(),'state'=>2),"id=".$id);
+                if($meetinginfo['type'] == 3){//期权计划创建
+                    $this->user->optionModel->update(array('state'=>5,'change_time'=>time()),"id=".$meetinginfo['option_id']);
+                }else if($meetinginfo['type'] == 4){//添加人员
+                    $this->user->excitationModel->update(array('state'=>5),"id=".$meetinginfo['option_id']);
                 }
 
-                $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
+            }else if($yes_sum > $companyinfo['support'] &&  $yes_cnt>$companyinfo['quorum']){
 
-                $sum = ($companyinfo['token_number']+$meetinginfo['number']);
-                $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
+                $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
+                if($meetinginfo['type'] == 1){//增发
+                    $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
+                    $targetinfo = $this->user->voteModel->fetchRow($sql);
 
-                $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
-                $chain_list = $this->user->chainModel->fetchAll($sql);
-                if(!empty($chain_list)){
-                    foreach ($chain_list as $key => $value) {
-                        $proportion = $value['token_number']/$sum*100;
-                        $proportion = substr(sprintf("%.5f",$proportion),0,-1);
-                        $uparr = array(
-                            'token_proportion' => $proportion,
-                            'change_time' => time()
-                        );
-                        $this->user->chainModel->update($uparr,"id=".$value['id']);
-                    }
-                }
-            }else if($meetinginfo['type'] == 2){
-                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and uid='".$meetinginfo['uid']."' and state=2 and position!=0";
-                $launchinfo = $this->user->chainModel->fetchRow($sql);
-                $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
-                $targetinfo = $this->user->chainModel->fetchRow($sql);
-                if($launchinfo['id']!=$targetinfo['id']){
-                    $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
-                    $proportion_a = $number_a/$companyinfo['token_number']*100;
-                    $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
-                    
-                    $number_b = ($targetinfo['token_number'] + $meetinginfo['number']);
-                    $proportion_b = $number_b/$companyinfo['token_number']*100;
-                    $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
-
-
-                    $launch_uparr = array(
-                    	'token_number' => $number_a,
-                    	'token_proportion' => $proportion_a,
-                    	'change_time' => time()
-                    );
-                    if($number_a <= 0){
-                        if($launchinfo['position'] == 2){
-                            $launch_uparr['position'] = 0;
-                    	}else if($launchinfo['position'] == 3){
-                    		$launch_uparr['position'] = 1;
-                    	}else if($launchinfo['position'] == 5){
-                    		$target_uparr['position'] = 4;
-                    	}
-                    }
+                    $target = ($targetinfo['token_number'] + $meetinginfo['number']);
 
                     $target_uparr = array(
-                    	'token_number' => $number_b,
-                    	'token_proportion' => $proportion_b,
-                    	'change_time' => time()
+                    	'token_number' => $target,
+                    	'change_time' => time(),
                     );
                     if($targetinfo['position'] == 1){
                     	$target_uparr['position'] = 3;
@@ -841,10 +800,117 @@ class node_su extends actionAbstract {
                     	$target_uparr['position'] = 5;
                     }
 
-                    $this->user->chainModel->update($launch_uparr,"id=".$launchinfo['id']);
                     $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
+
+                    $sum = ($companyinfo['token_number']+$meetinginfo['number']);
+                    $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
+
+                    $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
+                    $chain_list = $this->user->chainModel->fetchAll($sql);
+                    if(!empty($chain_list)){
+                        foreach ($chain_list as $key => $value) {
+                            $proportion = $value['token_number']/$sum*100;
+                            $proportion = substr(sprintf("%.5f",$proportion),0,-1);
+                            $uparr = array(
+                                'token_proportion' => $proportion,
+                                'change_time' => time()
+                            );
+                            $this->user->chainModel->update($uparr,"id=".$value['id']);
+                        }
+                    }
+                }else if($meetinginfo['type'] == 2){//转让
+                    $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and uid='".$meetinginfo['uid']."' and state=2 and position!=0";
+                    $launchinfo = $this->user->chainModel->fetchRow($sql);
+                    $sql = "SELECT id,token_number,position FROM user_chain WHERE company=".$companyinfo['id']." and address='".$meetinginfo['target']."' and state=2 and position!=0";
+                    $targetinfo = $this->user->chainModel->fetchRow($sql);
+                    if($launchinfo['id']!=$targetinfo['id']){
+                        $number_a = ($launchinfo['token_number'] - $meetinginfo['number']);
+                        $proportion_a = $number_a/$companyinfo['token_number']*100;
+                        $proportion_a = substr(sprintf("%.5f",$proportion_a),0,-1);
+                        
+                        $number_b = ($targetinfo['token_number'] + $meetinginfo['number']);
+                        $proportion_b = $number_b/$companyinfo['token_number']*100;
+                        $proportion_b = substr(sprintf("%.5f",$proportion_b),0,-1);
+
+                        $launch_uparr = array(
+                        	'token_number' => $number_a,
+                        	'token_proportion' => $proportion_a,
+                        	'change_time' => time()
+                        );
+                        if($number_a <= 0){
+                            if($launchinfo['position'] == 2){
+                                $launch_uparr['position'] = 0;
+                        	}else if($launchinfo['position'] == 3){
+                        		$launch_uparr['position'] = 1;
+                        	}else if($launchinfo['position'] == 5){
+                        		$target_uparr['position'] = 4;
+                        	}
+                        }
+
+                        $target_uparr = array(
+                        	'token_number' => $number_b,
+                        	'token_proportion' => $proportion_b,
+                        	'change_time' => time()
+                        );
+                        if($targetinfo['position'] == 1){
+                        	$target_uparr['position'] = 3;
+                        }else if($targetinfo['position'] == 4){
+                        	$target_uparr['position'] = 5;
+                        }
+
+                        $this->user->chainModel->update($launch_uparr,"id=".$launchinfo['id']);
+                        $this->user->chainModel->update($target_uparr,"id=".$targetinfo['id']);
+                    }
+                }else if($meetinginfo['type'] == 3){//期权计划创建
+                    $this->user->optionModel->update(array('state'=>4,'change_time'=>time()),"id=".$meetinginfo['option_id']);
+                }else if($meetinginfo['type'] == 4){//添加人员
+                    $this->user->excitationModel->update(array('state'=>4),"id=".$meetinginfo['option_id']);
+                }
+
+            }
+
+        }else if($meetinginfo['level'] == 2){//懂事会投票
+
+            if($no_cnt>=$companyinfo['quorum']){
+                $this->user->meetingModel->update(array('end_time'=>time(),'state'=>2),"id=".$id);
+                if($meetinginfo['type'] == 3){//期权计划创建
+                    $this->user->optionModel->update(array('state'=>3,'change_time'=>time()),"id=".$meetinginfo['option_id']);
+                }else if($meetinginfo['type'] == 4){//添加人员
+                    $this->user->excitationModel->update(array('state'=>3),"id=".$meetinginfo['option_id']);
+                }
+            }else if($yes_cnt>$companyinfo['quorum']){
+                $this->user->meetingModel->update(array('end_time'=>time(),'state'=>1),"id=".$id);
+                if($meetinginfo['type'] == 3){//期权计划创建
+                    $this->user->optionModel->update(array('state'=>3,'change_time'=>time()),"id=".$meetinginfo['option_id']);
+                    $inarr_meeting = array(
+                        'uid' => $meetinginfo['uid'],
+                        'type' => 3,
+                        'company' => $meetinginfo['company'],
+                        'content' => $meetinginfo['content'],
+                        'start_time' => time(),
+                        'keyname' => $keyname,
+                        'option_id' => $meetinginfo['option_id'],
+                        'level' => 1,
+                    );
+                    $this->user->meetingModel->insert($inarr_meeting);
+                }else if($meetinginfo['type'] == 4){//添加人员
+                    $this->user->excitationModel->update(array('state'=>3),"id=".$meetinginfo['option_id']);
+                    $inarr_meeting = array(
+                        'uid' => $meetinginfo['uid'],
+                        'type' => 4,
+                        'company' => $meetinginfo['company'],
+                        'content' => $meetinginfo['content'],
+                        'target' => $meetinginfo['target'],
+                        'number' => $meetinginfo['number'],
+                        'start_time' => time(),
+                        'keyname' => $keyname,
+                        'option_id' => $meetinginfo['option_id'],
+                        'level' => 1,
+                    );
+                    $this->user->meetingModel->insert($inarr_meeting);
                 }
             }
+
         }
         exit(json_encode(array('state' =>0,'info' => "操作成功")));
     }
@@ -872,6 +938,7 @@ class node_su extends actionAbstract {
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
         $option_time = isset($_POST['option_time'])?$_POST['option_time']:'2019-01-01';
+        $option_time = strtotime($option_time);
         $name = isset($_POST['name'])?$_POST['name']:'';
         $name = filterCharacter($name);
         $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
@@ -879,6 +946,7 @@ class node_su extends actionAbstract {
         $grant_type = isset($_POST['grant_type'])?(int)$_POST['grant_type']:0;
         $total_month = isset($_POST['total_month'])?(int)$_POST['total_month']:0;
         $content = isset($_POST['content'])?$_POST['content']:'';
+        $keyname = isset($_POST['keyname'])?(int)$_POST['keyname']:0;
 
         if(empty($only)){
             exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
@@ -946,7 +1014,7 @@ class node_su extends actionAbstract {
 
         $inarr_meeting = array(
             'uid' => $this->uid,
-            'type' => 0,
+            'type' => 3,
             'company' => $companyinfo['id'],
             'content' => $content,
             'start_time' => time(),
@@ -964,6 +1032,8 @@ class node_su extends actionAbstract {
         $this->loadModel('user','option');
         $this->loadModel('user','chain');
         $this->loadModel('user','company');
+        $this->loadModel('user','excitation');
+        $this->loadModel('user','meeting');
         $this->loadHelper("common");
 
         $only = isset($_POST['only'])?$_POST['only']:"";
@@ -975,6 +1045,8 @@ class node_su extends actionAbstract {
         $option_id = isset($_POST['option'])?(int)$_POST['option']:0;
         $token_number = isset($_POST['token_number'])?(int)$_POST['token_number']:0;
         $exercise_money = isset($_POST['exercise_money'])?$_POST['exercise_money']:0;
+        $content = isset($_POST['content'])?$_POST['content']:'';
+        $keyname = isset($_POST['keyname'])?(int)$_POST['keyname']:0;
 
         if(empty($only)){
             exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
@@ -998,7 +1070,7 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 5,'info' => "权限不够")));
         }
 
-        $sql = "SELECT id,portrait,position FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $sql = "SELECT id,uid,portrait,position FROM user_chain WHERE address='".$target."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $targetinfo = $this->user->chainModel->fetchRow($sql);
         if(empty($targetinfo)){
             exit(json_encode(array('state' => 6,'info' => "该组织无当前目标成员信息")));
@@ -1013,8 +1085,9 @@ class node_su extends actionAbstract {
         if(empty($token_number)){
             exit(json_encode(array('state' => 8,'info' => "TOKEN数不能为空")));
         }
+        $number = (int)$token_number*$optioninfo['grant_shares'];
 
-        $sql = "SELECT id FROM user_excitation WHERE tid=".$targetinfo['id']."  and state>0 and state<3";
+        $sql = "SELECT id FROM user_excitation WHERE tid=".$targetinfo['uid']." and state>0 and state<3";
         $excitationinfo = $this->user->excitationModel->fetchRow($sql);
         if(!empty($excitationinfo)){
             exit(json_encode(array('state' => 9,'info' => "目标成员已添加过")));
@@ -1024,16 +1097,20 @@ class node_su extends actionAbstract {
         $option_sum = $this->user->excitationModel->fetchRow($sql);
         $sum = $option_sum['token_number']+$token_number;
         if($sum > $optioninfo['token_number']){
-            exit(json_encode(array('state' => 9,'info' => "期权计划里的TOKEN数不足")));
+            exit(json_encode(array('state' => 10,'info' => "期权计划里的TOKEN数不足")));
         }
 
         if(empty($exercise_money)){
-            exit(json_encode(array('state' => 10,'info' => "行使价格不能为0")));
+            exit(json_encode(array('state' => 11,'info' => "行使价格不能为0")));
+        }
+
+        if(empty($content)){
+            exit(json_encode(array('state' => 12,'info' => "内容不能为空")));
         }
 
         $inarr = array(
             'uid' => $this->uid,
-            'tid' => $targetinfo['id'],
+            'tid' => $targetinfo['uid'],
             'option_id' => $option_id,
             'token_number' => $token_number,
             'exercise_money' => $exercise_money,
@@ -1043,9 +1120,158 @@ class node_su extends actionAbstract {
 
         $re=$this->user->excitationModel->insert($inarr);
         if(empty($re)){
-            exit(json_encode(array('state' =>11,'info' => "操作失败")));
+            exit(json_encode(array('state' =>13,'info' => "操作失败")));
         }
+
+        $inarr_meeting = array(
+            'uid' => $this->uid,
+            'type' => 4,
+            'company' => $companyinfo['id'],
+            'content' => $content,
+            'target' => $target,
+            'number' => $number,
+            'start_time' => time(),
+            'keyname' => $keyname,
+            'option_id' => $re,
+            'level' => 2,
+        );
+
+        $this->user->meetingModel->insert($inarr_meeting);
         exit(json_encode(array('state' =>0,'info' => "操作成功")));
+    }
+
+    //用户是否接受期权计划
+    public function excitation_if(){
+        $this->loadModel('user','plan');
+        $this->loadModel('user','option');
+        $this->loadModel('user','excitation');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        $excitation_id  = isset($_POST['excitation'])?(int)$_POST['excitation']:0;类型：0未操作1同意2否决
+        $type  = isset($_POST['type'])?(int)$_POST['type']:0;
+        if($type!=1 && $type!=2){
+            $type = 0;
+        }
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+
+        $sql = "SELECT id ,option_id,token_number,exercise_money FROM user_excitation WHERE id=".$excitation_id." and tid=".$this->uid." and state=4 and type=0";
+        $excitationinfo = $this->user->excitationModel->fetchRow($sql);
+        if(empty($excitationinfo)){
+            exit(json_encode(array('state' => 5,'info' => "当前人员无该期权激励计划")));
+        }
+        $re = $this->user->excitationModel->update(array('type'=>$type),"id=".$excitation_id);
+        if(empty($re)){
+            exit(json_encode(array('state' => 6,'info' => "操作失败")));
+        }
+
+        if($type==1){
+            $sql = "SELECT grant_shares,grant_type,total_month FROM user_option WHERE id=".$excitationinfo['option_id']." and state=4";
+            $optioninfo = $this->user->optionModel->fetchRow($sql);
+            if(!empty($optioninfo)){
+                $time = strtotime(date('Y-m-d'));
+                $token = (int)$excitationinfo['token_number']*$optioninfo['grant_shares'];
+                for ($plan_i=0; $plan_i < $optioninfo['total_month']; $plan_i++) {
+                    if($plan_i==0){
+                        $expire_time = $time;
+                        $token_number = $token;
+                    }else{
+                        if($optioninfo['grant_type']==1){
+                            $month = 1*$plan_i;
+                            $date = date("Y-m-d",strtotime("+".$month." month");
+                        }else if($optioninfo['grant_type']==2){
+                            $month = 3*$plan_i;
+                            $date = date("Y-m-d",strtotime("+".$month." month");
+                        }else if($optioninfo['grant_type']==3){
+                            $month = 6*$plan_i;
+                            $date = date("Y-m-d",strtotime("+".$month." month");
+                        }else if($optioninfo['grant_type']==4){
+                            $year = 1*$plan_i;
+                            $date = date("Y-m-d",strtotime("+".$year." year");
+                        }
+                        $expire_time = strtotime($date);
+                        $token_number = ($excitationinfo['token_number']-$token)/($optioninfo['total_month']-1);
+                    }
+                    $inarr=array(
+                        'excitation_id' => $excitationinfo['id'],
+                        'expire_time' => $expire_time,
+                        'cycle' => $optioninfo['grant_type'], 
+                        'token_number' => $token_number,
+                        'exercise_money' => $excitationinfo['exercise_money'],
+                    );
+                    $this->user->planModel->insert($inarr);
+                }
+            }
+        }
+        exit(json_encode(array('state' => 0,'info' => "操作成功")));
+    }
+
+    //用户执行计划
+    public function user_plan(){
+        $this->loadModel('user','plan');
+        $this->loadModel('user','chain');
+        $this->loadModel('user','company');
+        $this->loadHelper("common");
+
+        $only = isset($_POST['only'])?$_POST['only']:"";
+        $only = filterCharacter($only);
+        $address = isset($_POST['address'])?$_POST['address']:'';
+        $address = filterCharacter($address);
+        $plan_id = isset($_POST['plan'])?(int)$_POST['plan']:0;
+
+        if(empty($only)){
+            exit(json_encode(array('state' => 1,'info' => "组织唯一标识不能为空")));
+        }
+        if(empty($address)){
+            exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
+        }
+
+        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $companyinfo = $this->user->companyModel->fetchRow($sql);
+        if(empty($companyinfo)){
+            exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
+        }
+
+        $sql = "SELECT id,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $chaininfo = $this->user->chainModel->fetchRow($sql);
+        if(empty($chaininfo)){
+            exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
+        }
+
+        $sql = "SELECT * FROM user_plan WHERE id=".$plan_id." and state!=2";
+        $planinfo = $this->user->planModel->fetchRow($sql);
+        if(empty($planinfo)){
+            exit(json_encode(array('state' => 5,'info' => "该条信息以执行")));
+        }
+        if($planinfo['expire_time']<time()){
+            exit(json_encode(array('state' => 6,'info' => "没有到时间")));
+        }
+        $uparr = array(
+        );
+
     }
 
 
