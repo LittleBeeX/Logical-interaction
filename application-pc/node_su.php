@@ -1153,8 +1153,8 @@ class node_su extends actionAbstract {
         $only = filterCharacter($only);
         $address = isset($_POST['address'])?$_POST['address']:'';
         $address = filterCharacter($address);
-        $excitation_id  = isset($_POST['excitation'])?(int)$_POST['excitation']:0;类型：0未操作1同意2否决
-        $type  = isset($_POST['type'])?(int)$_POST['type']:0;
+        $excitation_id  = isset($_POST['excitation'])?(int)$_POST['excitation']:0;
+        $type = isset($_POST['type'])?(int)$_POST['type']:0;
         if($type!=1 && $type!=2){
             $type = 0;
         }
@@ -1193,7 +1193,7 @@ class node_su extends actionAbstract {
             $optioninfo = $this->user->optionModel->fetchRow($sql);
             if(!empty($optioninfo)){
                 $time = strtotime(date('Y-m-d'));
-                $token = (int)$excitationinfo['token_number']*$optioninfo['grant_shares'];
+                $token = (int)($excitationinfo['token_number']*$optioninfo['grant_shares']/100);
                 for ($plan_i=0; $plan_i < $optioninfo['total_month']; $plan_i++) {
                     if($plan_i==0){
                         $expire_time = $time;
@@ -1201,16 +1201,16 @@ class node_su extends actionAbstract {
                     }else{
                         if($optioninfo['grant_type']==1){
                             $month = 1*$plan_i;
-                            $date = date("Y-m-d",strtotime("+".$month." month");
+                            $date = date("Y-m-d",strtotime("+".$month." month"));
                         }else if($optioninfo['grant_type']==2){
                             $month = 3*$plan_i;
-                            $date = date("Y-m-d",strtotime("+".$month." month");
+                            $date = date("Y-m-d",strtotime("+".$month." month"));
                         }else if($optioninfo['grant_type']==3){
                             $month = 6*$plan_i;
-                            $date = date("Y-m-d",strtotime("+".$month." month");
+                            $date = date("Y-m-d",strtotime("+".$month." month"));
                         }else if($optioninfo['grant_type']==4){
                             $year = 1*$plan_i;
-                            $date = date("Y-m-d",strtotime("+".$year." year");
+                            $date = date("Y-m-d",strtotime("+".$year." year"));
                         }
                         $expire_time = strtotime($date);
                         $token_number = ($excitationinfo['token_number']-$token)/($optioninfo['total_month']-1);
@@ -1249,33 +1249,63 @@ class node_su extends actionAbstract {
             exit(json_encode(array('state' => 2,'info' => "钱包地址不能为空")));
         }
 
-        $sql = "SELECT id FROM user_company WHERE only='".$only."' and state=2";
+        $sql = "SELECT id,token_number FROM user_company WHERE only='".$only."' and state=2";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 3,'info' => "无当前组织信息")));
         }
 
-        $sql = "SELECT id,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
+        $sql = "SELECT id,token_number,portrait,position FROM user_chain WHERE uid='".$this->uid."' and address='".$address."' and company=".$companyinfo['id']." and state=2 and position!=0";
         $chaininfo = $this->user->chainModel->fetchRow($sql);
         if(empty($chaininfo)){
             exit(json_encode(array('state' => 4,'info' => "该组织无当前用户信息")));
         }
 
-        $sql = "SELECT * FROM user_plan WHERE id=".$plan_id." and state!=2";
+        $sql = "SELECT * FROM user_plan WHERE id=".$plan_id." and state=1";
         $planinfo = $this->user->planModel->fetchRow($sql);
         if(empty($planinfo)){
-            exit(json_encode(array('state' => 5,'info' => "该条信息以执行")));
-        }
-        if($planinfo['expire_time']<time()){
-            exit(json_encode(array('state' => 6,'info' => "没有到时间")));
+            exit(json_encode(array('state' => 5,'info' => "该条信息以执行或不能执行")));
         }
         $uparr = array(
+            'current_money' => 10,
+            'state' => 2
         );
+        $re = $this->user->planModel->update($uparr,"id=".$plan_id);
+        if(empty($re)){
+            exit(json_encode(array('state' => 6,'info' => "操作失败")));
+        }
 
+        $chain = ($chaininfo['token_number'] + $planinfo['token_number']);
+
+        $chain_uparr = array(
+            'token_number' => $chain,
+            'change_time' => time(),
+        );
+        if($chaininfo['position'] == 1){
+            $chain_uparr['position'] = 3;
+        }else if($chaininfo['position'] == 4){
+            $chain_uparr['position'] = 5;
+        }
+
+        $this->user->chainModel->update($chain_uparr,"id=".$chaininfo['id']);
+
+        $sum = ($companyinfo['token_number']+$planinfo['token_number']);
+        $this->user->companyModel->update(array('token_number'=>$sum,'change_time'=>time()),"id=".$companyinfo['id']);
+
+        $sql = "SELECT id,token_number FROM user_chain WHERE company=".$companyinfo['id']." and state=2 and position!=0";
+        $chain_list = $this->user->chainModel->fetchAll($sql);
+        if(!empty($chain_list)){
+            foreach ($chain_list as $key => $value) {
+                $proportion = $value['token_number']/$sum*100;
+                $proportion = substr(sprintf("%.5f",$proportion),0,-1);
+                $uparr = array(
+                    'token_proportion' => $proportion,
+                    'change_time' => time()
+                );
+                $this->user->chainModel->update($uparr,"id=".$value['id']);
+            }
+        }
+        exit(json_encode(array('state' => 0,'info' => "操作成功")));
     }
-
-
-
-
 }
 ?>
