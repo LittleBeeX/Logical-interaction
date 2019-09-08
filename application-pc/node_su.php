@@ -50,12 +50,15 @@ class node_su extends actionAbstract {
         }
         if(empty($address)){
             exit(json_encode(array('state' => 3,'info' => "注册国籍不能为空")));
+
         }
         if(empty($capital)){
             exit(json_encode(array('state' => 4,'info' => "注册资本不能为空")));
+
         }
         if(empty($only)){
             exit(json_encode(array('state' => 5,'info' => "组织唯一标识不能为空")));
+
         }
         if(empty($establish)){
             $establish = 0;
@@ -66,8 +69,10 @@ class node_su extends actionAbstract {
         if(empty($companyinfo)){
             $sql = "SELECT id FROM user_chain WHERE uid='".$this->uid."' and company=0 and position!=0";
             $chaininfo = $this->user->chainModel->fetchRow($sql);
+            
             if(empty($chaininfo)){
                 exit(json_encode(array('state' => 6,'info' => "请先提交个人认证信息")));
+
             }
 
             $inarr = array(

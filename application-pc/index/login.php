@@ -52,21 +52,21 @@
 			return false;
 		}
 		$.ajax({
-	        		url:'<?=$this->url("index/login_ajax")?>',
-	        		type:'post',
-	        		data:{account:account,password:password},
-	        		dataType:'json',
-	        		success:function(e){
-	        			if(e.state == 1){
-	        				$(e.info).parent('li').addClass('error');
-							return false;
-	        			}else if(e.state == 2){
-	        				alert(e.info);
-	        			}else{
-	        				alert(e.info);
-	        				window.history.back(-1);
-	        			}
-		        	} 
+        		url:'<?=$this->url("index/login_ajax")?>',
+        		type:'post',
+        		data:{account:account,password:password},
+        		dataType:'json',
+        		success:function(e){
+        			if(e.state == 1){
+        				$(e.info).parent('li').addClass('error');
+						return false;
+        			}else if(e.state == 2){
+        				alert(e.info);
+        			}else{
+        				alert(e.info);
+        				window.history.back(-1);
+        			}
+	        	} 
 	    	})
     	});
 </script>

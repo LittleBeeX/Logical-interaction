@@ -18,17 +18,20 @@ class node_se extends actionAbstract {
             exit(json_encode(array('state' => 102,'info' => "信息过期，请重新登录")));
         }
         $this->uid = $userinfo['id'];
+
     }
 
     //获取用户名
     public function session_user(){
         exit(json_encode(array('info' => $_SESSION['userinfo']['account'])));
+
     }
 
     //获取国籍
     public function nationality(){
         global $phone_codes;
         exit(json_encode(array('info' => $phone_codes)));
+
     }
 
     //获取组织信息
@@ -40,14 +43,17 @@ class node_se extends actionAbstract {
         $only = filterCharacter($only);
         if (empty($only)) {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
+
         }
 
         $sql = "SELECT name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks,contract FROM user_company WHERE only='".$only."'";
         $info = $this->user->companyModel->fetchRow($sql);
         if(empty($info)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+
         }else{
             exit(json_encode(array('state' => 0,'info' => $info)));
+
         }
     }
 
@@ -64,6 +70,7 @@ class node_se extends actionAbstract {
         $address = filterCharacter($address);
         if (empty($address)) {
             exit(json_encode(array('state' => 1,'info' => "钱包地址不能为空")));
+
         }
         $companyid = 0;
         $sql = "SELECT id FROM user_company WHERE only='".$only."'";
@@ -73,7 +80,9 @@ class node_se extends actionAbstract {
         }
 
         $sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyid;
+
         $chaininfo = $this->user->chainModel->fetchRow($sql);
+
         if(empty($chaininfo)){
             $info = array(
                 'surname' => '',
@@ -106,6 +115,7 @@ class node_se extends actionAbstract {
             $info = $chaininfo;
         }
         exit(json_encode(array('state' => 0,'info' => $info)));
+
     }
     
     //获取组织和个人信息
@@ -121,15 +131,19 @@ class node_se extends actionAbstract {
         $address = filterCharacter($address);
         if (empty($only)) {
             exit(json_encode(array('state' => 1,'info' => "组织名称不能为空")));
+
         }
         if (empty($address)) {
             exit(json_encode(array('state' => 3,'info' => "钱包地址不能为空")));
+
         }
 
         $sql = "SELECT id,uid,name,code,address,capital,establish,only,state,logo,zhangcheng,support,quorum,duration,token_name,token_symbol,token_number,remarks,contract FROM user_company WHERE only='".$only."'";
         $companyinfo = $this->user->companyModel->fetchRow($sql);
+
         if(empty($companyinfo)){
             exit(json_encode(array('state' => 2,'info' => "无当前组织信息")));
+            
         }else{
         	$sql = "SELECT surname,name,sex,nationality,birthtime,address,picture,portrait,state,create_time,remarks,token_number,token_proportion,passports,position FROM user_chain WHERE uid=".$this->uid." and address='".$address."' and company=".$companyinfo['id'];
         	$chaininfo = $this->user->chainModel->fetchRow($sql);
