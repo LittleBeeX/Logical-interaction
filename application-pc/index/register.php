@@ -14,10 +14,12 @@
 					</div>
 					<div class="list">
 					<?foreach ($phone_codes as $key => $value) {?>
+
 						<p>
 							<span class="float-left" value="<?=$key?>"><?=$value['country']?></span>
 							<span class="float-right"><?=$value['en']?></span>
 						</p>
+						
 					<?}?>
 					</div>
 				</li>
@@ -122,21 +124,21 @@
 			return false;
 		}
 		$.ajax({
-	        		url:'<?=$this->url("index/register_ajax")?>',
-	        		type:'post',
-	        		data:{codes:codes,email:email,code:code,firstpassword:firstpassword,secondpassword:secondpassword},
-	        		dataType:'json',
-	        		success:function(e){
-	        			if(e.state == 1){
-	        				$(e.info).parent('li').addClass('error');
-							return false;
-	        			}else if(e.state == 2){
-	        				alert(e.info);
-	        			}else{
-	        				alert(e.info);
-	        				window.location.href = "/index.php/<?=$this->languageName?>/home/index/login";
-	        			}
-		        	} 
+        		url:'<?=$this->url("index/register_ajax")?>',
+        		type:'post',
+        		data:{codes:codes,email:email,code:code,firstpassword:firstpassword,secondpassword:secondpassword},
+        		dataType:'json',
+        		success:function(e){
+        			if(e.state == 1){
+        				$(e.info).parent('li').addClass('error');
+						return false;
+        			}else if(e.state == 2){
+        				alert(e.info);
+        			}else{
+        				alert(e.info);
+        				window.location.href = "/index.php/<?=$this->languageName?>/home/index/login";
+        			}
+	        	} 
 	    	})
     	});
 
@@ -151,13 +153,13 @@
 	    		if(countdown==60){
 				var email = $('#email').val();
 	    			$.ajax({
-			        		url:'<?=$this->url("common/VerificationCode")?>',
-			        		type:'post',
-			        		data:{email:email},
-			        		dataType:'json',
-			        		success:function(e){
-			        			alert(e.info);
-				        	} 
+		        		url:'<?=$this->url("common/VerificationCode")?>',
+		        		type:'post',
+		        		data:{email:email},
+		        		dataType:'json',
+		        		success:function(e){
+		        			alert(e.info);
+			        	} 
 			    	})
 	    		}
 		    	$(obj).addClass('bgafafaf');
